@@ -1,0 +1,31 @@
+{
+  "name": "blinkit",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "module",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@adminjs/fastify": "^4.1.3",
+    "@adminjs/mongoose": "^4.1.0",
+    "@adminjs/themes": "^1.0.1",
+    "@fastify/cookie": "^7.4.0",
+    "@fastify/session": "^11.1.0",
+    "adminjs": "^7.8.15",
+    "bcrypt": "^5.1.1",
+    "connect-mongodb-session": "^5.0.0",
+    "dotenv": "^16.4.7",
+    "fastify": "^4.29.0",
+    "fastify-socket.io": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "nodemon": "^3.1.9",
+    "socket.io": "^4.8.1"
+  }
+}
