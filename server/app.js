@@ -31,7 +31,7 @@ const start = async () => {
                 console.log(err);
             }
             else {
-                console.log(`Blinkit Started on http://localhost:${PORT}${admin.options.rootPath}`);
+                console.log(`ApnaMart Started on http://localhost:${PORT}${admin.options.rootPath}`);
             }
         });
 
