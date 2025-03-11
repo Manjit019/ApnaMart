@@ -59,7 +59,7 @@ export const admin = new AdminJS({
     rootPath: "/admin",
     defaultTheme: dark.id,
     availableThemes: [dark, light, noSidebar],
-})
+});
 
 
 export const buildAdminRouter = async (app) => {
@@ -70,12 +70,14 @@ export const buildAdminRouter = async (app) => {
     },
         app, {
         store: sessionStore,
-        saveUnintialized: true,
-        secret: COOKIE_PASSWORD,
+        saveUnintialized: false,
+        resave : false,
+        secret: COOKIE_PASSWORD || 'supersecretT20',
         cookie: {
-            httpOnly: true,
+            httpOnly: process.env.NODE_ENV === 'production',
             secure: process.env.NODE_ENV === 'production',
-            maxAge:1000*60*60*24
+            maxAge:1000*60*60*24,
+            sameSite: "lax" 
         }
     })
 }

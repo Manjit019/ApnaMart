@@ -10,17 +10,20 @@ const start = async () => {
 
     await connectDB(process.env.MONGO_URI);
 
-    const app = fastify();
+    const app = fastify({
+        logger: true,
+        trustProxy : true,
+    });
 
     app.register(fastifySocketIO, {
         cors: {
             origin: "*",
         },
         credentials : true,
-        methods : ["GET","POST","PUT","DELETE"],
         pingTimeout: 10000, 
         pingInterval: 5000,
         transports: ["websocket"],
+        cookie : true
     })
 
     await registerRoutes(app);
@@ -33,7 +36,8 @@ const start = async () => {
                 console.log(err);
             }
             else {
-                console.log(`ApnaMart Started on http://localhost:${PORT}${admin.options.rootPath}`);
+                console.log(`ApnaMart Started on Port : ${PORT}${admin.options.rootPath}`);
+                console.log(`ApnaMart AdminJS Started at :${app.printRoutes()}/admin`);
             }
         });
 

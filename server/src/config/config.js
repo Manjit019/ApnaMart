@@ -8,6 +8,7 @@ const MongoDBStore = connectMongodbSession(fastifySession);
 export const sessionStore = new MongoDBStore({
     uri: process.env.MONGO_URI,
     collection: "sessions",
+    databaseName : "ApnaMart"
 })
 
 sessionStore.on("error",(error)=>{
