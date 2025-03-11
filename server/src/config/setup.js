@@ -53,7 +53,8 @@ export const admin = new AdminJS({
         withMadeWithLove: false,
         defaultTheme: dark.id,
         availableTheme: [dark, light, noSidebar],
-        favicon : 'https://res.cloudinary.com/dkp5txigu/image/upload/v1741696157/app_icon_jra1d5.jpg'
+        favicon : 'https://res.cloudinary.com/dkp5txigu/image/upload/v1741696157/app_icon_jra1d5.jpg',
+        
     },
     rootPath: "/admin",
     defaultTheme: dark.id,
@@ -72,8 +73,9 @@ export const buildAdminRouter = async (app) => {
         saveUnintialized: true,
         secret: COOKIE_PASSWORD,
         cookie: {
-            httpOnly: process.env.NODE_ENV === 'production',
+            httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            maxAge:1000*60*60*24
         }
     })
 }

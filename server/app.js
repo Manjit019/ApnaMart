@@ -16,7 +16,9 @@ const start = async () => {
         cors: {
             origin: "*",
         },
-        pingTimeout: 10000,
+        credentials : true,
+        methods : ["GET","POST","PUT","DELETE"],
+        pingTimeout: 10000, 
         pingInterval: 5000,
         transports: ["websocket"],
     })

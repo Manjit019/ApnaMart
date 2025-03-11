@@ -15,7 +15,7 @@ sessionStore.on("error",(error)=>{
 })
 
 export const authenticate = async (email, password) => {
-    if(email=="manjitk019@gmail.com" && password=="#com.ApnaMart@25;"){
+    if(email===process.env.ADMIN_EMAIL && password===process.env.ADMIN_PASSWORD){
         return Promise.resolve({email: email, password: password});
     }
     else{
