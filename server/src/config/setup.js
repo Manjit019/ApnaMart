@@ -49,10 +49,11 @@ export const admin = new AdminJS({
         { resource: Models.Counter }
     ],
     branding: {
-        companyName: "Blinkit",
+        companyName: "ApnaMart",
         withMadeWithLove: false,
         defaultTheme: dark.id,
         availableTheme: [dark, light, noSidebar],
+        favicon : 'https://res.cloudinary.com/dkp5txigu/image/upload/v1741696157/app_icon_jra1d5.jpg'
     },
     rootPath: "/admin",
     defaultTheme: dark.id,

@@ -6,7 +6,7 @@ import connectMongodbSession from "connect-mongodb-session";
 const MongoDBStore = connectMongodbSession(fastifySession);
 
 export const sessionStore = new MongoDBStore({
-    uri: process.env.MONGODB_URI,
+    uri: process.env.MONGO_URI,
     collection: "sessions",
 })
 
@@ -15,7 +15,7 @@ sessionStore.on("error",(error)=>{
 })
 
 export const authenticate = async (email, password) => {
-    if(email=="manjitk019@gmail.com" && password=="hello123"){
+    if(email=="manjitk019@gmail.com" && password=="#com.ApnaMart@25;"){
         return Promise.resolve({email: email, password: password});
     }
     else{
