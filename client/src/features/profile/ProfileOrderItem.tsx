@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {FC} from 'react';
 import CustomText from '@components/ui/CustomText';
-import {Fonts} from '@utils/Constants';
+import {Colors, Fonts} from '@utils/Constants';
 import {formatISOToCustom} from '@utils/DateUtils';
 
 interface CartItem {
@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.4,
     paddingVertical: 16,
     opacity: 0.9,
+    borderColor : Colors.disabled
   },
   flexRowBetween: {
     justifyContent: 'space-between',

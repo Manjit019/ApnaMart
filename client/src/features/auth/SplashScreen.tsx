@@ -6,7 +6,7 @@ import Logo from '@assets/appIcons/app_icon.jpg';
 import GeoLocation from '@react-native-community/geolocation';
 import { useAuthStore } from '@state/authStore';
 import { tokenStorage } from '@state/storage';
-import { resetAndNavigate } from '@utils/NavigationUtils';
+import { navigate, resetAndNavigate } from '@utils/NavigationUtils';
 import {jwtDecode} from 'jwt-decode';
 import { refetchUser, refresh_token } from '@service/authService';
 import CustomText from '@components/ui/CustomText';
@@ -92,7 +92,12 @@ const SplashScreen:FC = () => {
     <View style={styles.container}> 
       {/* <Image source={Logo} style={styles.logoImage} /> */}
       <CustomText  fontFamily={Fonts.Bold} style={styles.appText}> Apna<CustomText variant='h1' fontFamily={Fonts.Bold} style={[styles.appText,{color : 'orange'}]}>Mart</CustomText></CustomText>
-      <CustomText variant='h8' fontFamily={Fonts.Medium} style={{opacity : 0.8}} >Your Everyday Grocery Partner</CustomText>
+      <CustomText variant='h8' fontFamily={Fonts.Medium} style={{opacity : 0.7,includeFontPadding : true,marginTop : 4}} >Your Everyday Grocery Partner</CustomText>
+
+      <View style={styles.bottom}>
+      <CustomText variant='h8' fontFamily={Fonts.Medium} style={{opacity : 0.7}} >Developed with 🩶 by Manjit.</CustomText>
+      <CustomText variant='h9'>App Version 1.0.0.0</CustomText>
+      </View>
     </View>
   )
 }
@@ -112,6 +117,14 @@ const styles = StyleSheet.create({
     appText : {
       color : '#000',
       fontSize : RFValue(45)
+    },
+    bottom : {
+      position : 'absolute',
+      bottom : 6,
+      width : '100%',
+      height : 70,
+      justifyContent : 'center',
+      alignItems : 'center'
     }
 });
 

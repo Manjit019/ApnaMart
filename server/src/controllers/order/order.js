@@ -34,6 +34,7 @@ export const createOrder = async (req, reply) => {
 
         });
 
+      
         let savedOrder = await newOrder.save();
 
         savedOrder = await savedOrder.populate([
@@ -155,8 +156,6 @@ export const getOrders = async (req, reply) => {
         return reply.status(200).send(orders);
 
     } catch (error) {
-        console.log(error);
-
         return reply.status(500).send({ message: "Failed to retrieve orderssss", error });
     }
 }
@@ -176,8 +175,6 @@ export const getOrderbyId = async (req, reply) => {
         return reply.status(200).send(order);
 
     } catch (error) {
-        console.log(error);
-
         return reply.status(500).send({ message: "Failed to retrieve orders", error });
     }
 }

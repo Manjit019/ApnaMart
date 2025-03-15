@@ -18,7 +18,7 @@ const DeliveryLogin: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isEyeOpen, setIsEyeOpen] = useState(false);
+  const [isEyeOpen, setIsEyeOpen] = useState(true);
 
   const {user, setUser} = useAuthStore();
 
@@ -30,7 +30,7 @@ const DeliveryLogin: FC = () => {
       resetAndNavigate('DeliveryDashboard');
     } catch (error) {
       Alert.alert('Login Failed!');
-    } finally {
+    } finally { 
       setLoading(false);
     }
   };

@@ -36,7 +36,7 @@ const start = async () => {
                 console.log(err);
             }
             else {
-                console.log(`ApnaMart Started on https://localhost:${PORT}${admin.options.rootPath}`);
+                console.log(`ApnaMart Started on http://localhost:${PORT}${admin.options.rootPath}`);
             }
         });
 

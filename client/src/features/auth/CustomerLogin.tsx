@@ -15,7 +15,7 @@ import {
 } from 'react-native-gesture-handler';
 import CustomSafeAreaView from '@components/global/CustomSafeAreaView';
 import ProductSlider from '@components/login/ProductSlider';
-import {resetAndNavigate} from '@utils/NavigationUtils';
+import {navigate, resetAndNavigate} from '@utils/NavigationUtils';
 import CustomText from '@components/ui/CustomText';
 import {Colors, Fonts, lightColors} from '@utils/Constants';
 import CustomInput from '@components/ui/CustomInput';
@@ -59,9 +59,14 @@ const CustomerLogin: FC = () => {
     setLoading(true);
     try {
       const data = await customerLogin(phoneNumber);
-
       setUser(data.customer);
-
+      console.log(data,data.customer.address);
+      
+      if(data.customer.name === "User" || !data.customer.address ){
+        navigate("CompleteProfile");
+        console.log("User haven't completed Profile ");
+        return;
+      }
       resetAndNavigate('ProductDashboard');
     } catch (error) {
       console.error(error);
@@ -85,7 +90,7 @@ const CustomerLogin: FC = () => {
 
       setGestureSequence(newSequence);
 
-      if (newSequence.join(' ') === 'up up') {
+      if (newSequence.join(' ') === 'down down left right up') {
         setGestureSequence([]);
         resetAndNavigate('DeliveryLogin');
       }

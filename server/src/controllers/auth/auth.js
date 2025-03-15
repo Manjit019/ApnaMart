@@ -42,7 +42,7 @@ export const loginCustomer = async (req, reply) => {
     } catch (error) {
         return reply.status(500).send({ message: "An error occurred! " });
     }
-}
+} 
 
 export const loginDeliveryPartner = async (req, reply) => {
     try {

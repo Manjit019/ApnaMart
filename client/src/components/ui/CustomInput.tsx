@@ -1,29 +1,32 @@
 import { Colors, Fonts } from "@utils/Constants";
 import { FC } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ViewStyle } from "react-native";
 import { RFValue } from "react-native-responsive-fontsize";
 import Icon from 'react-native-vector-icons/Ionicons'
 import CustomText from "./CustomText";
 
 interface InputProps{
-    left:React.ReactNode;
+    left?:React.ReactNode;
     onClear?:()=>void;
     right?:boolean;
     rightIcon?:string;
-}``
+    style?:ViewStyle| ViewStyle[]
+}
 
 const CustomInput:FC<InputProps & React.ComponentProps<typeof TextInput>> = ({
     onClear,
     left,
     right,
     rightIcon = 'close-circle-sharp',
+    style,
    ...props
 }) =>{
 
     return (
-        <View style={styles.flexRow}>
+        <View style={[styles.flexRow,style]}>
             {left}
-            <TextInput {...props} style={styles.inputContainer}  placeholderTextColor={'#ccc'} />
+
+            <TextInput  {...props} style={styles.inputContainer}  placeholderTextColor={'#ccc'} />
             <View style={styles.icon}>
                     {props.value?.length != 0 && right && 
                         <TouchableOpacity onPress={onClear}>
@@ -60,11 +63,10 @@ const styles = StyleSheet.create({
         width : '75%',
         fontFamily : Fonts.SemiBold,
         fontSize : RFValue(12),
-        paddingVertical : 14,
+        paddingVertical : 18,
         paddingBottom : 15,
         height : '100%',
         color: Colors.text,
-        bottom : -1,
     },
     icon : {
         width : '5%',

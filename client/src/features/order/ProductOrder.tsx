@@ -42,9 +42,8 @@ const ProductOrder = () => {
         }
 
         setLoading(true);
-        const data = await createOrder(formattedData,totalItemPrice+40)
-        console.log('order data',data);
-        
+        const data = await createOrder(formattedData,totalItemPrice+40);
+
         if(data != null){
             setCurrentOrder(data);
             clearCart();

@@ -15,16 +15,20 @@ const ProductItem: FC<{item: any; index: any}> = ({item, index}) => {
         <Image source={{uri: item?.image}} style={styles.img} />
       </View>
       <View style={styles.content}>
-        <View style={styles.flexRow}>
-          <Image
-            source={require('@assets/icons/clock.png')}
-            style={styles.clockIcon}
-          />
+        <View style={[{flexDirection : 'row',justifyContent : 'space-between',alignItems : 'center'}]}>
+          <View style={styles.flexRow}>
+            <Image
+              source={require('@assets/icons/clock.png')}
+              style={styles.clockIcon}
+            />
+            <CustomText fontSize={RFValue(6)} fontFamily={Fonts.Medium}>
+              20 MINS
+            </CustomText>
+          </View>
           <CustomText fontSize={RFValue(6)} fontFamily={Fonts.Medium}>
-            20 MINS
+            {item.quantity}
           </CustomText>
         </View>
-
         <CustomText
           fontFamily={Fonts.Medium}
           variant="h8"
@@ -45,7 +49,7 @@ const ProductItem: FC<{item: any; index: any}> = ({item, index}) => {
               ₹{item?.discountPrice}
             </CustomText>
           </View>
-          
+
           <UniversalAdd item={item} />
         </View>
       </View>

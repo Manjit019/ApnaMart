@@ -80,3 +80,14 @@ export const refresh_token = async () => {
     }
   };
   
+
+  export const updateUser = async (formData : any) => {
+
+      try {
+        const res = await appAxios.patch(`${BASE_URL}/user`,formData);
+        return res.data;
+      } catch (error) {
+        console.log("Error Updating user");
+        return null
+      }
+  }

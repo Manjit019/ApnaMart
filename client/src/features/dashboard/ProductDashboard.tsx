@@ -6,6 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
+  Pressable,
+  Linking,
 } from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import {useAuthStore} from '@state/authStore';
@@ -33,7 +35,6 @@ import withLiveStatus from '@features/map/withLiveStatus';
 const NOTICE_HEIGHT = -(NoticeHeight + 12);
 
 const ProductDashboard = () => {
-  
   const noticePosition = useRef(new RNAnimated.Value(NOTICE_HEIGHT)).current;
 
   const {scrollY, expand} = useCollapsibleContext();
@@ -124,8 +125,7 @@ const ProductDashboard = () => {
           <CollapsibleScrollView
             nestedScrollEnabled
             style={styles.panelContainer}
-            showsVerticalScrollIndicator={false} >
-
+            showsVerticalScrollIndicator={false}>
             <Content />
 
             <View style={{backgroundColor: '#f8f8f8', padding: 20}}>
@@ -133,22 +133,47 @@ const ProductDashboard = () => {
                 fontSize={RFValue(26)}
                 fontFamily={Fonts.Bold}
                 style={{opacity: 0.2}}>
-                 ApnaMart 🛒
+                ApnaMart 🛒
               </CustomText>
               <CustomText
                 fontSize={RFValue(18)}
                 fontFamily={Fonts.Bold}
                 style={{opacity: 0.2}}>
-                 Your Everyday Grocery Partner.
+                Your Everyday Grocery Partner.
               </CustomText>
-              <CustomText
-                fontFamily={Fonts.Bold}
-                style={{opacity: 0.3, marginTop: 10, paddingBottom: 100}}>
-                Developed with 🩶 by Manjit.
+              <View
+                style={{
+                  opacity: 0.3,
+                  marginTop: 10,
+                  paddingBottom: 100,
+                  flexDirection: 'row',
+                  alignItems: 'baseline',
+                }}>
+                <CustomText fontFamily={Fonts.Bold}>
+                  Developed with 🩶 by
+                </CustomText>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={{
+                    backgroundColor: '#fff',
+                    borderRadius: 20,
+                    paddingHorizontal: 11,
+                    paddingVertical: 5,
+                  }}
+                  onPress={() =>
+                    Linking.openURL('https://manjitsportfolio.netlify.app/')
+                  }>
+                  <CustomText
+                    fontFamily={Fonts.SemiBold}
+                    style={{color: 'blue'}}>
+                    Manjit
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
+              <CustomText variant="h9" style={{textAlign: 'center'}}>
+                App Version 1.0.0.0
               </CustomText>
-              <CustomText variant='h9' style={{textAlign : 'center'}}>App Version 1.0.0.0</CustomText>
             </View>
-
           </CollapsibleScrollView>
         </CollapsibleContainer>
       </>
@@ -179,4 +204,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withLiveStatus(withCart(withCollapsibleContext(ProductDashboard)));
+export default withLiveStatus(
+  withCart(withCollapsibleContext(ProductDashboard)),
+);

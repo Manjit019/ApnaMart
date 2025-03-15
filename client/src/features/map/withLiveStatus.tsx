@@ -19,8 +19,7 @@ const withLiveStatus = <P extends object>(
     const routeName = useNavigationState(
       state => state.routes[(state.stale, state.index)].name,
     );
-    console.log(currentOrder);
-    
+   
 
     const fetchOrderDetails = async () => {
       const data = await getOrderById(currentOrder?._id as any);

@@ -20,7 +20,7 @@ const header:FC<{showNotice:()=>void}> = ({showNotice}) => {
                 16 minutes
         </CustomText>
         <TouchableOpacity style={styles.noticeBtn} onPress={showNotice} activeOpacity={0.8} >
-            <CustomText  fontSize={RFValue(6)} fontFamily={Fonts.SemiBold} style={[{color : '#3b4886'}]}>🌧️ Rain</CustomText>
+            <CustomText  fontSize={RFValue(6)} fontFamily={Fonts.SemiBold} style={[{color : '#3b4886'}]}>🌤️ Summer</CustomText>
         </TouchableOpacity>
      </View>
 

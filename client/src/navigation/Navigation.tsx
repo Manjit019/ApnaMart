@@ -15,6 +15,7 @@ import OrderSuccess from '@features/order/OrderSuccess';
 import LiveTracking from '@features/map/LiveTracking';
 import ProfileScreen from '@features/profile/ProfileScreen';
 import DeliveryMap from '@features/delivery/DeliveryMap';
+import CompleteProfile from '@features/auth/CompleteProfile';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,13 @@ const Navigation: FC = () => {
           }}
           name="CustomerLogin"
           component={CustomerLogin}
+        />
+         <Stack.Screen
+          options={{
+            animation: 'ios_from_right',
+          }}
+          name="CompleteProfile"
+          component={CompleteProfile}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
 const customerSchema = new mongoose.Schema({
     ...userSchema.obj,
     phone : {type : Number,required : true,unique : true},
+    email : {type : String},
     role : {type : String,enum : ['Customer'],default:"Customer"},
     liveLocation : {
         latitude : {type : Number},

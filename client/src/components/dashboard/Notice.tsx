@@ -14,7 +14,7 @@ const Notice:FC = () => {
             <View style={styles.noticeContainer}>
                 <SafeAreaView>
                     <CustomText style={[styles.heading,styles.textCenter]} variant='h8' fontFamily={Fonts.SemiBold}>
-                        It's raining near this loaction
+                    The temperature's rising near this location.
                     </CustomText>
                     <CustomText style={styles.textCenter} variant='h9' fontFamily={Fonts.Medium}>
                         Our delivery partners may take longer to reach you.

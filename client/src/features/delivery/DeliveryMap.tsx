@@ -76,7 +76,7 @@ const DeliveryMap = () => {
     );
     if (data) {
       setCurrentOrder(data);
-      Alert.alert("Let's deliver it as soon as possible");
+      Alert.alert("Order Picked Up","Let's deliver it as soon as possible");
     } else {
       Alert.alert('There was an error!');
     }
@@ -92,7 +92,7 @@ const DeliveryMap = () => {
 
     if (data) {
       setCurrentOrder(null);
-      Alert.alert('Congrats!,You made it😍');
+      Alert.alert('Congrats!,You made it😍',"Great job! Order Delivered Successfully");
     } else {
       Alert.alert('There was an error!');
     }
