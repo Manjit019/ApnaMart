@@ -81,7 +81,7 @@ const ProductCategory = () => {
           />
         )}
         {productsLoading ? (
-          <ActivityIndicator size="small" color={Colors.border} />
+          <ActivityIndicator size="small" color={Colors.border} style={{justifyContent : 'center',alignItems : 'center'}} />
         ) : (
           <ProductList data={products || []} />
         )}

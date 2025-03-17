@@ -155,9 +155,9 @@ const ProductDashboard = () => {
                 <TouchableOpacity
                   activeOpacity={0.8}
                   style={{
-                    backgroundColor: '#fff',
+                    backgroundColor: '#000',
                     borderRadius: 20,
-                    paddingHorizontal: 11,
+                    paddingHorizontal: 8,
                     paddingVertical: 5,
                   }}
                   onPress={() =>
