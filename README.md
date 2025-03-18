@@ -70,7 +70,7 @@ COOKIE_PASSWORD=your_cookie_password
 Start the backend server:
 
 ```bash
-npm run dev
+npm start
 ```
 
 ## 🚀 Running the App
