@@ -95,7 +95,7 @@ export const refreshToken = async (req, reply) => {
         }
 
         if(!user){
-            return reply.status(403).send({message : "Invalid refresh token"});
+           return reply.status(403).send({message : "Invalid refresh token"});
         }
 
         if(!user.isActivated){

@@ -3,6 +3,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  StatusBar,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -98,7 +99,7 @@ const CompleteProfile = () => {
         } catch (error) {
           Alert.alert('There was an error refreshing token!');
           return false;
-        }finally{
+        } finally {
           resetAndNavigate('ProductDashboard');
         }
       }
@@ -114,6 +115,11 @@ const CompleteProfile = () => {
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
+      <StatusBar
+        backgroundColor={Colors.backgroundSecondary}
+        barStyle="dark-content"
+        translucent={false}
+      />
       <View style={styles.flexRowBetween}>
         <CustomText
           variant="h1"

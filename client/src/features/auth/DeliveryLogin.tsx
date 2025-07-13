@@ -1,4 +1,4 @@
-import {View, Text, Alert, StyleSheet} from 'react-native';
+import {View, Text, Alert, StyleSheet, StatusBar} from 'react-native';
 import React, {FC, useState} from 'react';
 import {resetAndNavigate} from '@utils/NavigationUtils';
 import {deliveryLogin} from '@service/authService';
@@ -37,6 +37,11 @@ const DeliveryLogin: FC = () => {
 
   return (
     <CustomSafeAreaView>
+       <StatusBar
+              backgroundColor='#ffffff'
+              barStyle="dark-content"
+              translucent={false}
+            />
       <ScrollView
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag">
@@ -94,7 +99,7 @@ const DeliveryLogin: FC = () => {
 
           />
 
-          <CustomButton disabled={email.length ==0 || password.length<8} title='Login' onPress={handleLogin} loading={loading} customStyle={{marginTop : 75}} />
+          <CustomButton disabled={email.length ==0 || password.length<8 || loading} title='Login' onPress={handleLogin} loading={loading} customStyle={{marginTop : 75}} />
         </View>
       </ScrollView>
     </CustomSafeAreaView>

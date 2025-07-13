@@ -6,6 +6,7 @@ import {
   Image,
   Keyboard,
   Alert,
+  StatusBar,
 } from 'react-native';
 import React, {FC, useEffect, useRef, useState} from 'react';
 import {
@@ -99,6 +100,11 @@ const CustomerLogin: FC = () => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
+       <StatusBar
+              backgroundColor="#ffffff"
+              barStyle="dark-content"
+              translucent={false}
+            />
       <View style={styles.container}>
         <CustomSafeAreaView>
           <ProductSlider />
@@ -147,7 +153,7 @@ const CustomerLogin: FC = () => {
                 />
                 <CustomButton
                   title="Continue"
-                  disabled={phoneNumber?.length != 10}
+                  disabled={phoneNumber?.length != 10 || loading}
                   onPress={() => handleAuth()}
                   loading={loading}
                 />

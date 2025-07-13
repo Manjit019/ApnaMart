@@ -50,8 +50,7 @@ const start = async () => {
             });
 
             socket.on("disconnect",()=>{
-                console.log("User Disconnected❌");
-                
+                console.log("User Disconnected❌");                
             })
         })
     });
