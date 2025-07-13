@@ -1,10 +1,10 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {FC} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {NavigationContainer} from '@react-navigation/native';
+import { StyleSheet, Text, View } from 'react-native';
+import React, { FC } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
 // import SplashScreen from '@features/auth/SplashScreen';
 import SplashScreen from '../features/auth/SplashScreen';
-import {navigationRef} from '@utils/NavigationUtils';
+import { navigationRef } from '@utils/NavigationUtils';
 import DeliveryLogin from '@features/auth/DeliveryLogin';
 import CustomerLogin from '@features/auth/CustomerLogin';
 import ProductDashboard from '@features/dashboard/ProductDashboard';
@@ -21,23 +21,35 @@ const Stack = createNativeStackNavigator();
 
 const Navigation: FC = () => {
   return (
-    <NavigationContainer ref={navigationRef}>
+    <NavigationContainer ref={navigationRef}  >
       <Stack.Navigator
         initialRouteName="SplashScreen"
-        screenOptions={{headerShown: false }}>
-        <Stack.Screen name="SplashScreen" component={SplashScreen} />
-        <Stack.Screen name="ProductDashboard" component={ProductDashboard} />
-        <Stack.Screen name="DeliveryDashboard" component={DeliveryDashboard} />
-        <Stack.Screen name="ProductCategory" component={ProductCategory} />
-        <Stack.Screen name="ProductOrder" component={ProductOrder} />
-        <Stack.Screen name="OrderSuccess" component={OrderSuccess} />
-        <Stack.Screen name="LiveTracking" component={LiveTracking} />
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
-        <Stack.Screen name="DeliveryMap" component={DeliveryMap} />
-        
+        screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SplashScreen" component={SplashScreen} 
+            options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="ProductDashboard" component={ProductDashboard} 
+             options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="DeliveryDashboard" component={DeliveryDashboard} 
+             options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="ProductCategory" component={ProductCategory} 
+              options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="ProductOrder" component={ProductOrder} 
+              options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="OrderSuccess" component={OrderSuccess} 
+             options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="LiveTracking" component={LiveTracking} 
+             options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} 
+             options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="DeliveryMap" component={DeliveryMap} 
+             options={{ navigationBarHidden: true }} />
+
         <Stack.Screen
           options={{
             animation: 'fade',
+            navigationBarHidden: true
           }}
           name="DeliveryLogin"
           component={DeliveryLogin}
@@ -45,13 +57,15 @@ const Navigation: FC = () => {
         <Stack.Screen
           options={{
             animation: 'fade',
+            navigationBarHidden : true
           }}
           name="CustomerLogin"
           component={CustomerLogin}
         />
-         <Stack.Screen
+        <Stack.Screen
           options={{
             animation: 'ios_from_right',
+            navigationBarHidden : true
           }}
           name="CompleteProfile"
           component={CompleteProfile}

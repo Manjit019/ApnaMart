@@ -1,4 +1,4 @@
-import {ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useAuthStore} from '@state/authStore';
 import {
@@ -148,6 +148,7 @@ const DeliveryMap = () => {
   }
   return (
     <View style={styles.container}>
+       <StatusBar translucent={false} backgroundColor="#fff" barStyle='dark-content' />
       <LiveHeader type="Delivery" title="ApnaMart" secondaryTitle={msg} />
       <ScrollView
         showsVerticalScrollIndicator={false}

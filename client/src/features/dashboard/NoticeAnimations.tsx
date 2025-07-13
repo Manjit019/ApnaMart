@@ -2,8 +2,9 @@ import {View, Text, StyleSheet, Animated as RNAnimated} from 'react-native';
 import React, {FC} from 'react';
 import {NoticeHeight} from '../../utils/Scaling';
 import Notice from '../../components/dashboard/Notice';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const NOTICE_HEIGHT = -(NoticeHeight + 12);
+const NOTICE_HEIGHT = -(NoticeHeight + 32);
 
 const NoticeAnimations: FC<{
   noticePosition: any;
@@ -12,7 +13,7 @@ const NoticeAnimations: FC<{
 
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <RNAnimated.View
         style={[
           styles.noticeContainer,
@@ -27,7 +28,7 @@ const NoticeAnimations: FC<{
           { 
             paddingTop: noticePosition.interpolate({
               inputRange: [NOTICE_HEIGHT,0],
-              outputRange: [0,NOTICE_HEIGHT+150],
+              outputRange: [0,NOTICE_HEIGHT+240],
             })
           },
         ]}>

@@ -1,26 +1,26 @@
-import {FlatList, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import { FlatList, StatusBar, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Colors, Fonts} from '@utils/Constants';
+import { Colors, Fonts } from '@utils/Constants';
 import CustomText from '@components/ui/CustomText';
 import CustomHeader from '@components/ui/CustomHeader';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {useAuthStore} from '@state/authStore';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { useAuthStore } from '@state/authStore';
 import ActionButton from './ActionButton';
-import {useCartStore} from '@state/cartStore';
-import {fetchCustomerOrders} from '@service/orderService';
+import { useCartStore } from '@state/cartStore';
+import { fetchCustomerOrders } from '@service/orderService';
 import OrderItem from '@features/order/OrderItem';
 import ProfileOrderItem from './ProfileOrderItem';
-import {storage, tokenStorage} from '@state/storage';
-import {resetAndNavigate} from '@utils/NavigationUtils';
+import { storage, tokenStorage } from '@state/storage';
+import { resetAndNavigate } from '@utils/NavigationUtils';
 import WalletSection from './WalletSection';
 
 
 
 const ProfileScreen = () => {
   const [orders, setOrders] = useState([]);
-  const {user, logout, currentOrder} = useAuthStore();
-  const {clearCart} = useCartStore();
+  const { user, logout, currentOrder } = useAuthStore();
+  const { clearCart } = useCartStore();
 
   const fetchOrders = async () => {
     const data = await fetchCustomerOrders(user?._id);
@@ -31,12 +31,13 @@ const ProfileScreen = () => {
     fetchOrders();
   }, []);
 
-  
+
 
   const renderHeader = () => {
     return (
       <View>
-        <View style={[styles.flexRow, {justifyContent: 'space-between'}]}>
+        <StatusBar translucent={false} backgroundColor="#fff" barStyle='dark-content' />
+        <View style={[styles.flexRow, { justifyContent: 'space-between' }]}>
           <View>
             <CustomText variant="h3" fontFamily={Fonts.SemiBold}>
               Hey! {user?.name.split(' ')[0] || 'Ananonymous'}
@@ -48,7 +49,7 @@ const ProfileScreen = () => {
               {user?.address}
             </CustomText>
           </View>
-          <View style={[styles.iconContainer, {flexDirection: 'row'}]}>
+          <View style={[styles.iconContainer, { flexDirection: 'row' }]}>
             <Icon
               name="flash-outline"
               size={RFValue(16)}
@@ -81,14 +82,14 @@ const ProfileScreen = () => {
         <CustomText
           variant="h8"
           fontFamily={Fonts.SemiBold}
-          style={{color: Colors.text, marginBottom: 10, marginTop: 25}}>
+          style={{ color: Colors.text, marginBottom: 10, marginTop: 25 }}>
           PAST ORDERS
         </CustomText>
       </View>
     );
   };
 
-  const renderOrders = ({item, index}: any) => {
+  const renderOrders = ({ item, index }: any) => {
     return <ProfileOrderItem key={index} item={item} index={index} />;
   };
 
@@ -105,14 +106,14 @@ const ProfileScreen = () => {
         ListFooterComponent={
           <CustomText
             variant="h9"
-            style={{textAlign: 'center', paddingTop: 140}}>
+            style={{ textAlign: 'center', paddingTop: 140 }}>
             App Version 1.0.0.0
           </CustomText>
         }
-        ListFooterComponentStyle={{paddingTop : 120}}
-        ListEmptyComponent={()=>{
+        ListFooterComponentStyle={{ paddingTop: 120 }}
+        ListEmptyComponent={() => {
           return (
-            <CustomText variant='h8' style={{paddingTop : 30}}>No Past Order Found Yet! </CustomText>
+            <CustomText variant='h8' style={{ paddingTop: 30 }}>No Past Order Found Yet! </CustomText>
           )
         }}
       />

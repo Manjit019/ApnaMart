@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Platform, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, StyleSheet, Image, Platform, TouchableOpacity, Alert, StatusBar } from 'react-native'
 import React, { useState } from 'react'
 import CustomHeader from '@components/ui/CustomHeader'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -55,6 +55,9 @@ const ProductOrder = () => {
 
   return (
     <View style={styles.container}>
+
+         <StatusBar translucent={false} backgroundColor="#fff" barStyle='dark-content' />
+
         <CustomHeader title='Checkout'  />
 
         <ScrollView contentContainerStyle={styles.scrollContainer}>

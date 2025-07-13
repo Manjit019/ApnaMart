@@ -8,6 +8,7 @@ import {
   Platform,
   Pressable,
   Linking,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import {useAuthStore} from '@state/authStore';
@@ -32,7 +33,7 @@ import Content from './Content';
 import withCart from '@features/cart/withCart';
 import withLiveStatus from '@features/map/withLiveStatus';
 
-const NOTICE_HEIGHT = -(NoticeHeight + 12);
+const NOTICE_HEIGHT = -(NoticeHeight + 32);
 
 const ProductDashboard = () => {
   const noticePosition = useRef(new RNAnimated.Value(NOTICE_HEIGHT)).current;
@@ -57,7 +58,7 @@ const ProductDashboard = () => {
   const slideUp = () => {
     RNAnimated.timing(noticePosition, {
       toValue: NOTICE_HEIGHT,
-      duration: 1200,
+      duration: 2000,
       useNativeDriver: false,
     }).start();
   };
@@ -65,7 +66,7 @@ const ProductDashboard = () => {
   const slideDown = () => {
     RNAnimated.timing(noticePosition, {
       toValue: 0,
-      duration: 1200,
+      duration: 1600,
       useNativeDriver: false,
     }).start();
   };
@@ -80,10 +81,12 @@ const ProductDashboard = () => {
 
   // const {user} = useAuthStore();
   return (
-    <NoticeAnimations noticePosition={noticePosition}>
+
+    <NoticeAnimations noticePosition={noticePosition} >
       <>
+        <StatusBar translucent={true} backgroundColor="transparent" />
         <Visuals />
-        <SafeAreaView />
+        {/* <SafeAreaView /> */}
 
         <Animated.View style={[styles.backToTopBtn, backToTopStyle]}>
           <TouchableOpacity
@@ -108,7 +111,7 @@ const ProductDashboard = () => {
         </Animated.View>
 
         <CollapsibleContainer style={styles.panelContainer}>
-          <CollapsibleHeaderContainer containerStyle={styles.transparent}>
+          <CollapsibleHeaderContainer containerStyle={styles.transparent}  >
             <AnimatedHeader
               showNotice={() => {
                 slideDown();
@@ -126,6 +129,7 @@ const ProductDashboard = () => {
             nestedScrollEnabled
             style={styles.panelContainer}
             showsVerticalScrollIndicator={false}>
+
             <Content />
 
             <View style={{backgroundColor: '#f8f8f8', padding: 20}}>
@@ -150,14 +154,14 @@ const ProductDashboard = () => {
                   alignItems: 'baseline',
                 }}>
                 <CustomText fontFamily={Fonts.Bold}>
-                  Developed with 🩶 by
+                  Developed with ❤ by {' '}
                 </CustomText>
                 <TouchableOpacity
                   activeOpacity={0.8}
                   style={{
-                    backgroundColor: '#000',
-                    borderRadius: 20,
-                    paddingHorizontal: 8,
+                    backgroundColor: '#f33ff3',
+                    borderRadius: 10,
+                    paddingHorizontal: 16,
                     paddingVertical: 5,
                   }}
                   onPress={() =>
@@ -166,12 +170,12 @@ const ProductDashboard = () => {
                   <CustomText
                     fontFamily={Fonts.SemiBold}
                     style={{color: 'blue'}}>
-                    Manjit
+                    MANJIT
                   </CustomText>
                 </TouchableOpacity>
               </View>
               <CustomText variant="h9" style={{textAlign: 'center'}}>
-                App Version 1.0.0.0
+                App Version 1.1.0
               </CustomText>
             </View>
           </CollapsibleScrollView>

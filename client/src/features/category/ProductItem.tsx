@@ -13,9 +13,14 @@ const ProductItem: FC<{item: any; index: any}> = ({item, index}) => {
     <View style={[styles.container, {marginRight: isSecondColumn ? 10 : 0}]}>
       <View style={styles.imageContainer}>
         <Image source={{uri: item?.image}} style={styles.img} />
+
+        <View style={styles.addBtn}>
+         <UniversalAdd item={item} />
+        </View>
       </View>
       <View style={styles.content}>
         <View style={[{flexDirection : 'row',justifyContent : 'space-between',alignItems : 'center'}]}>
+
           <View style={styles.flexRow}>
             <Image
               source={require('@assets/icons/clock.png')}
@@ -38,7 +43,7 @@ const ProductItem: FC<{item: any; index: any}> = ({item, index}) => {
         </CustomText>
 
         <View style={styles.priceContainer}>
-          <View>
+          <View style={{flexDirection : 'row',alignItems : 'center'}}>
             <CustomText variant="h8" fontFamily={Fonts.SemiBold}>
               ₹{item?.price}{' '}
             </CustomText>
@@ -50,7 +55,6 @@ const ProductItem: FC<{item: any; index: any}> = ({item, index}) => {
             </CustomText>
           </View>
 
-          <UniversalAdd item={item} />
         </View>
       </View>
     </View>
@@ -74,6 +78,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 5,
+    position : 'relative'
+  },
+  addBtn : {
+    position : 'absolute',
+    bottom : 5,
+    right : 5
   },
   img: {
     height: '100%',
