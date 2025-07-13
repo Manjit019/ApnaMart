@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
         required : true
     },
     isActivated :{type : Boolean,default : false},
-    
+    isPhoneVerified : {type : Boolean,default : false}
 })
 
 //customer schema

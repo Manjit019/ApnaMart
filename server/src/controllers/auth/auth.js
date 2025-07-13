@@ -22,11 +22,11 @@ const generateToken = (user) => {
 export const loginCustomer = async (req, reply) => {
     
     try {
-        const { phone } = req.body;
+        const { phone , isPhoneVerified} = req.body;
         let customer = await Customer.findOne({ phone });
         
         if (!customer) {
-            customer = new Customer({ name : "User", phone, role: "Customer", isActivated: true });
+            customer = new Customer({ name : "User", phone, role: "Customer", isActivated: true ,isPhoneVerified});
             await customer.save();
         }
 
