@@ -1,48 +1,48 @@
 
 export const categoryData = [
   {
-      "id": 1,
-      "name": "Milk, Curd & Paneer",
-      "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072211/1_zbaeif.png"
+    "id": 1,
+    "name": "Milk, Curd & Paneer",
+    "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072211/1_zbaeif.png"
   },
   {
-      "id": 2,
-      "name": "Pharma & Wellness",
-      "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072211/2_ycyxv8.png"
+    "id": 2,
+    "name": "Pharma & Wellness",
+    "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072211/2_ycyxv8.png"
   },
   {
-      "id": 3,
-      "name": "Vegetables & Fruits",
-      "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072212/3_nkr9gb.png"
+    "id": 3,
+    "name": "Vegetables & Fruits",
+    "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072212/3_nkr9gb.png"
   },
   {
-      "id": 4,
-      "name": "Munchies",
-      "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072229/4_lnph4d.png"
+    "id": 4,
+    "name": "Munchies",
+    "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072229/4_lnph4d.png"
   },
   {
-      "id": 5,
-      "name": "Home & Office",
-      "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072222/5_ien3hq.png"
+    "id": 5,
+    "name": "Home & Office",
+    "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072222/5_ien3hq.png"
   },
   {
-      "id": 6,
-      "name": "Baby Care",
-      "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072231/6_nojsip.png"
+    "id": 6,
+    "name": "Baby Care",
+    "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072231/6_nojsip.png"
   },
   {
-      "id": 7,
-      "name": "Ata, Rice & Dal",
-      "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072227/7_ld8vqn.png"
+    "id": 7,
+    "name": "Ata, Rice & Dal",
+    "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072227/7_ld8vqn.png"
   },
   {
-      "id": 8,
-      "name": "Cleaning Essentials",
-      "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072226/8_qolwjr.png"
+    "id": 8,
+    "name": "Cleaning Essentials",
+    "image": "https://res.cloudinary.com/dkp5txigu/image/upload/v1741072226/8_qolwjr.png"
   }
 ]
 
-  
+
 
 
 
@@ -54,7 +54,8 @@ export const products = [
     "price": 34,
     "discountPrice": 38,
     "quantity": "500 ml",
-    "category": "Milk, Curd & Paneer"
+    "category": "Milk, Curd & Paneer",
+    "description": ""
   },
   {
     "id": 2,
@@ -63,34 +64,54 @@ export const products = [
     "price": 30,
     "discountPrice": 32,
     "quantity": "500 ml",
-    "category": "Milk, Curd & Paneer"
+    "category": "Milk, Curd & Paneer",
+    "brand": "Mother Dairy",
+    "images": [
+      "https://rukminim2.flixcart.com/image/612/612/kfikya80/milk-powder/f/c/u/1-whitener-dailycious-mother-dairy-original-imafvyyhzztqvsmb.jpeg?q=70",
+      "https://rukminim2.flixcart.com/image/612/612/kfikya80/milk-powder/f/c/u/1-whitener-dailycious-mother-dairy-original-imafvyyhzztqvsmb.jpeg?q=70"
+    ],
+    "description": "Mother Dairy Dailycious Cow Milk Powder is rich in calcium and protein, making it a nutritious option for everyday use. Ideal for tea, coffee, and cooking."
   },
   {
-    "id": 3,
     "name": "Amul Butter",
     "image": "https://rukminim2.flixcart.com/image/612/612/xif0q/butter/v/m/3/-original-imagkjwdn2fe6grb.jpeg?q=70",
     "price": 50,
     "discountPrice": 55,
     "quantity": "100 gm",
-    "category": "Milk, Curd & Paneer"
+    "category": "Milk, Curd & Paneer",
+    "brand": "Amul",
+    "images": [
+      "https://rukminim2.flixcart.com/image/612/612/xif0q/butter/v/m/3/-original-imagkjwdn2fe6grb.jpeg?q=70",
+      "https://rukminim2.flixcart.com/image/612/612/xif0q/butter/v/m/3/-original-imagkjwdn2fe6grb.jpeg?q=70",
+      "https://rukminim2.flixcart.com/image/612/612/xif0q/butter/v/m/3/-original-imagkjwdn2fe6grb.jpeg?q=70"
+    ],
+    "description": "Amul butter is a deliciously creamy, salty spread made from pure milk fat. Ideal for breads, parathas, and baking."
   },
   {
-    "id": 4,
-    "name": "Go Plain Cheese ",
+    "name": "Go Plain Cheese",
     "image": "https://rukminim2.flixcart.com/image/612/612/xif0q/cheese/b/4/s/-original-imah6xd9qjbyffcq.jpeg?q=70",
     "price": 120,
     "discountPrice": 130,
     "quantity": "200 gm",
-    "category": "Milk, Curd & Paneer"
+    "category": "Milk, Curd & Paneer",
+    "brand": "Go",
+    "images": [
+      "https://rukminim2.flixcart.com/image/612/612/xif0q/cheese/b/4/s/-original-imah6xd9qjbyffcq.jpeg?q=70"
+    ],
+    "description": "Go Plain Cheese is soft and creamy, perfect for cooking, sandwiches, or enjoying as a snack."
   },
   {
-    "id": 5,
-    "name": "MOTHER DAIRY Classic Plain Curd",
+    "name": "Mother Dairy Classic Plain Curd",
     "image": "https://rukminim2.flixcart.com/image/612/612/kmkxbww0/curd-yogurt/u/u/l/200-classic-curd-200gm-cup-cup-mother-dairy-original-imagfgfegeb9vcxn.jpeg?q=70",
     "price": 40,
     "discountPrice": 45,
     "quantity": "400 gm",
-    "category": "Milk, Curd & Paneer"
+    "category": "Milk, Curd & Paneer",
+    "brand": "Mother Dairy",
+    "images": [
+      "https://rukminim2.flixcart.com/image/612/612/kmkxbww0/curd-yogurt/u/u/l/200-classic-curd-200gm-cup-cup-mother-dairy-original-imagfgfegeb9vcxn.jpeg?q=70"
+    ],
+    "description": "Mother Dairy Classic Curd is thick, creamy and mildly tangy. A healthy addition to meals or snacks."
   },
   {
     "id": 6,
@@ -339,7 +360,7 @@ export const products = [
     "id": 32,
     "name": "Tata Sampan Masoor Dal",
     "image": "https://rukminim2.flixcart.com/image/612/612/xif0q/pulses/y/c/b/1-unpolished-lal-masoor-whole-1-masoor-dal-tata-sampann-original-imahft5vhdgpx5yh.jpeg?q=70",
-    "price":240,
+    "price": 240,
     "discountPrice": 400,
     "quantity": "1 kg",
     "category": "Ata, Rice & Dal"
@@ -414,8 +435,8 @@ export const products = [
     "price": 364,
     "discountPrice": 769,
     "quantity": "2 liter",
-    "category": "Cleaning Essentials"
+    "category": "Cleaning Essentials",
+
   }
 ]
 
-  

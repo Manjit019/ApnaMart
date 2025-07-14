@@ -28,7 +28,7 @@ const StickySearchBar: FC = () => {
     };
   });
 
-  // const paddingTop = useAnimatedValue(0);
+  // const paddingTop = useAnimatedValue(0);j
 
   // const handleTopPadding = 
 

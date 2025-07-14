@@ -11,11 +11,6 @@ export const admin = new AdminJS({
     resources: [
         {
             resource: Models.Customer,
-            options: {
-
-                listProperties: ["name", "phone", "role", "isActivated"],
-                filterProperties: ["phone", "role", "isActivated"],
-            }
         },
         {
             resource: Models.DeliveryPartner,
@@ -36,10 +31,7 @@ export const admin = new AdminJS({
 
         {
             resource: Models.Product,
-            options: {
-                listProperties: ["name", "price", "discountPrice", "category"],
-                filterProperties: ["name", "price", "category"],
-            }
+        
         },
         { resource: Models.Order ,
             options : {
@@ -72,7 +64,7 @@ export const buildAdminRouter = async (app) => {
         store: sessionStore,
         saveUnintialized: false,
         resave : false,
-        secret: COOKIE_PASSWORD || 'supersecretT20',
+        secret: COOKIE_PASSWORD || 'supersecretT20sfffsfwrwfsdfgsffsdfsfwer23dfsfsdfs',
         cookie: {
             httpOnly: process.env.NODE_ENV === 'production',
             secure: process.env.NODE_ENV === 'production',
