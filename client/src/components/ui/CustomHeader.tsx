@@ -1,8 +1,8 @@
-import {Pressable, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import React, {FC} from 'react';
 import {Colors, Fonts} from '@utils/Constants';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {goBack} from '@utils/NavigationUtils';
+import {goBack, navigate} from '@utils/NavigationUtils';
 import {RFValue} from 'react-native-responsive-fontsize';
 import CustomText from './CustomText';
 
@@ -10,11 +10,14 @@ const CustomHeader: FC<{title: string; search?: boolean}> = ({
   title,
   search,
 }) => {
+
+
+
   return (
     <SafeAreaView>
       <View style={styles.flexRow}>
         <Pressable onPress={() => goBack()}>
-          <Icon name="chevron-back" color={Colors.text} size={RFValue(16)} />
+          <Icon name="chevron-back" color={Colors.text} size={RFValue(18)} />
         </Pressable>
         <CustomText
           style={styles.text}
@@ -24,7 +27,9 @@ const CustomHeader: FC<{title: string; search?: boolean}> = ({
         </CustomText>
 
         {search && (
-          <Icon name="search" color={Colors.text} size={RFValue(16)} />
+          <TouchableOpacity activeOpacity={0.8} onPress={() => navigate('SearchScreen')}>
+            <Icon name="search" color={Colors.text} size={RFValue(18)} />
+          </TouchableOpacity>
         )}
       </View>
     </SafeAreaView>
@@ -46,6 +51,6 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    width : '90%'
+    width : '88%'
   },
 });

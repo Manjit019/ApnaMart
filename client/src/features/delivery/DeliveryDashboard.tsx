@@ -6,6 +6,7 @@ import {
   FlatList,
   RefreshControl,
   ActivityIndicator,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {Colors} from '@utils/Constants';
@@ -66,6 +67,7 @@ const DeliveryDashboard = () => {
 
   return (
     <View style={styles.container}>
+       <StatusBar translucent={false} backgroundColor={Colors.secondary} barStyle='dark-content' />
       <SafeAreaView>
         <DeliveryHeader name={user?.name} email={user?.email} />
       </SafeAreaView>

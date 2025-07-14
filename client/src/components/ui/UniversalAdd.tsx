@@ -20,12 +20,13 @@ const UniversalAdd: FC<{item: any}> = ({item}) => {
       ]}>
       {count === 0 ? (
         <Pressable onPress={() => addItem(item)} style={styles.add}>
-          <CustomText
+          {/* <CustomText
             variant="h9"
             fontFamily={Fonts.SemiBold}
             style={styles.addText}>
             ADD
-          </CustomText>
+          </CustomText> */}
+           <Icon name="plus" color={Colors.secondary} size={RFValue(16)} />
         </Pressable>
       ) : (
         <View style={styles.counterContainer}>
@@ -55,12 +56,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: Colors.secondary,
-    borderRadius: 58,
-    width: 78,
+    borderRadius: 8,
     paddingHorizontal : 4
   },
   add: {
-    width: '100%',
+    // width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 4,
@@ -72,11 +72,11 @@ const styles = StyleSheet.create({
   counterContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%',
     paddingHorizontal: 4,
     paddingVertical: 6,
     justifyContent: 'space-between',
-    gap : 4
+    gap : 4,
+    width: 78,
   },
   text: {
     color: '#fff',
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   iconStyle : {
     borderColor : Colors.border,
     borderWidth : 0.7,
-    borderRadius :50,
+    borderRadius :5,
     padding : 2
   }
 });

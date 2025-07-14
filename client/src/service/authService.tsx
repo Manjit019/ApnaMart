@@ -6,9 +6,9 @@ import { resetAndNavigate } from '@utils/NavigationUtils';
 import { appAxios } from './apiInterceptors';
 
 
-export const customerLogin = async (phone: string) => {
+export const customerLogin = async (phone: string,isPhoneVerified : boolean) => {
   try {
-    const response = await axios.post(`${BASE_URL}/customer/login`, { phone });
+    const response = await axios.post(`${BASE_URL}/customer/login`, { phone , isPhoneVerified });
     
     const {accessToken, refreshToken, customer} = response.data;
     

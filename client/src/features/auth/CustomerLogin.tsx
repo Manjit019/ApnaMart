@@ -7,8 +7,9 @@ import {
   Keyboard,
   Alert,
   StatusBar,
+  ToastAndroid,
 } from 'react-native';
-import React, {FC, useEffect, useRef, useState} from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import {
   GestureHandlerRootView,
   PanGestureHandler,
@@ -16,26 +17,32 @@ import {
 } from 'react-native-gesture-handler';
 import CustomSafeAreaView from '@components/global/CustomSafeAreaView';
 import ProductSlider from '@components/login/ProductSlider';
-import {navigate, resetAndNavigate} from '@utils/NavigationUtils';
+import { navigate, resetAndNavigate } from '@utils/NavigationUtils';
 import CustomText from '@components/ui/CustomText';
-import {Colors, Fonts, lightColors} from '@utils/Constants';
+import { Colors, Fonts, lightColors } from '@utils/Constants';
 import CustomInput from '@components/ui/CustomInput';
 import CustomButton from '@components/ui/CustomButton';
 import useKeyboardOffsetHeight from '@utils/useKeyboardOffsetHeight';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import {customerLogin} from '@service/authService';
-import {useAuthStore} from '@state/authStore';
+import { customerLogin } from '@service/authService';
+import { useAuthStore } from '@state/authStore';
+import OtpModal from '@components/login/OtpModal';
+import auth from '@react-native-firebase/auth';
 
 const bottomColors = [...lightColors].reverse();
 
 const CustomerLogin: FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [confirm, setConfirm] = useState<any>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const [gestureSequence, setGestureSequence] = useState<string[]>([]);
   const keyboardOffsetHeight = useKeyboardOffsetHeight();
 
-  const {user, setUser} = useAuthStore();
+  const { user, setUser } = useAuthStore();
 
   const animatedValue = useRef(new Animated.Value(0)).current;
 
@@ -55,31 +62,63 @@ const CustomerLogin: FC = () => {
     }
   }, [keyboardOffsetHeight]);
 
-  const handleAuth = async () => {
+  const sendOtp = async () => {
+
     Keyboard.dismiss();
     setLoading(true);
+
+    if (!phoneNumber || phoneNumber.length !== 10) {
+      Alert.alert('Invalid Phone Number', 'Please enter a valid 10-digit phone number.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const data = await customerLogin(phoneNumber);
+      const confirmation = await auth().signInWithPhoneNumber(`+91${phoneNumber}`);
+      console.log(confirmation);
+
+      setConfirm(confirmation);
+      setModalVisible(true);
+
+    } catch (error) {
+      console.log("Failed to send OTP : ", error);
+      ToastAndroid.show("Failed to send OTP ", ToastAndroid.SHORT);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+
+  const verifyOTP = async (code: string) => {
+
+    if (code.length != 6) return;
+
+    try {
+      const verificationData = await confirm.confirm(code);
+
+      setIsOtpVerified(true);
+
+      const data = await customerLogin(phoneNumber, isOtpVerified);
       setUser(data.customer);
-      console.log(data,data.customer.address);
-      
-      if(data.customer.name === "User" || !data.customer.address ){
+
+      if (data.customer.name === "User" || !data.customer.address) {
         navigate("CompleteProfile");
         console.log("User haven't completed Profile ");
         return;
       }
       resetAndNavigate('ProductDashboard');
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Login Failed', 'Something went wrong during login.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handleGesture = ({nativeEvent}: any) => {
+    } catch (error: any) {
+      console.log("OTP Verification Failed :", error);
+      Alert.alert('OTP Verification Failed!', error?.message);
+      setIsOtpVerified(false);
+    }
+
+  }
+
+  const handleGesture = ({ nativeEvent }: any) => {
     if (nativeEvent.state === State.END) {
-      const {translationX, translationY} = nativeEvent;
+      const { translationX, translationY } = nativeEvent;
 
       let direction = '';
       if (Math.abs(translationX) > Math.abs(translationY)) {
@@ -100,11 +139,11 @@ const CustomerLogin: FC = () => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-       <StatusBar
-              backgroundColor="#ffffff"
-              barStyle="dark-content"
-              translucent={false}
-            />
+      <StatusBar
+        backgroundColor="#ffffff"
+        barStyle="dark-content"
+        translucent={false}
+      />
       <View style={styles.container}>
         <CustomSafeAreaView>
           <ProductSlider />
@@ -114,15 +153,15 @@ const CustomerLogin: FC = () => {
               keyboardDismissMode={'on-drag'}
               keyboardShouldPersistTaps={'handled'}
               contentContainerStyle={styles.subContainer}
-              style={{transform: [{translateY: animatedValue}]}}>
+              style={{ transform: [{ translateY: animatedValue }] }}>
               <LinearGradient colors={bottomColors} style={styles.gradient} />
               <View style={styles.content}>
                 <Image
                   source={require('@assets/appIcons/app_icon.jpg')}
                   style={styles.logo}
                 />
-                <CustomText variant="h2" fontFamily={Fonts.Bold} style={{textAlign : 'center'}} >
-                 Your Everyday Grocery Partner
+                <CustomText variant="h2" fontFamily={Fonts.Bold} style={{ textAlign: 'center' }} >
+                  Your Everyday Grocery Partner
                 </CustomText>
                 <CustomText
                   variant="h5"
@@ -152,9 +191,9 @@ const CustomerLogin: FC = () => {
                   right={true}
                 />
                 <CustomButton
-                  title="Continue"
+                  title={loading ? "Sending OTP" : "Continue"}
                   disabled={phoneNumber?.length != 10 || loading}
-                  onPress={() => handleAuth()}
+                  onPress={() => sendOtp()}
                   loading={loading}
                 />
               </View>
@@ -168,6 +207,9 @@ const CustomerLogin: FC = () => {
           </CustomText>
         </View>
       </View>
+
+      <OtpModal isVisible={modalVisible} onClose={() => setModalVisible(false)} onConfirm={verifyOTP} isVerified={isOtpVerified} onResend={() => sendOtp()} />
+
     </GestureHandlerRootView>
   );
 };

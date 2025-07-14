@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect} from 'react';
 import {useAuthStore} from '@state/authStore';
 import {getOrderById} from '@service/orderService';
@@ -45,6 +45,7 @@ const LiveTracking = () => {
 
   return (
     <View style={styles.container}>
+       <StatusBar translucent={false} backgroundColor={Colors.secondary} barStyle='light-content' />
       <LiveHeader type="Customer" title={msg} secondaryTitle={time} />
       <ScrollView
         showsVerticalScrollIndicator={false}

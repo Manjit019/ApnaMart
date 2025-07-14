@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     inputContainer : {
         width : '75%',
         fontFamily : Fonts.SemiBold,
-        fontSize : RFValue(12),
+        fontSize : RFValue(13),
         paddingVertical : 18,
         paddingBottom : 15,
         height : '100%',

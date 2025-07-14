@@ -6,15 +6,19 @@ import CustomText from '@components/ui/CustomText'
 import { Fonts } from '@utils/Constants'
 import {Defs, G, Path, Svg, Use,} from 'react-native-svg'
 import { wavyData } from '@utils/dummyData'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 const Notice:FC = () => {
+
+     const insets = useSafeAreaInsets() ;
+
   return (
-    <View style={{height : NoticeHeight}}>
-      <View style={styles.container}>
+    <View style={{height : NoticeHeight,}}>
+      <View style={[styles.container,{paddingTop : insets.top}]}>
             <View style={styles.noticeContainer}>
                 <SafeAreaView>
                     <CustomText style={[styles.heading,styles.textCenter]} variant='h8' fontFamily={Fonts.SemiBold}>
-                    The temperature's rising near this location.
+                    The raining near this location.
                     </CustomText>
                     <CustomText style={styles.textCenter} variant='h9' fontFamily={Fonts.Medium}>
                         Our delivery partners may take longer to reach you.

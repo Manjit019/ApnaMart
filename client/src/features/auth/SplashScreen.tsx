@@ -88,9 +88,7 @@ const SplashScreen: FC = () => {
   return (
     <View style={styles.container}>
       <StatusBar
-        backgroundColor={Colors.primary_light}
-        barStyle="dark-content"
-        translucent={false}
+        hidden
       />
       {/* <Image source={Logo} style={styles.logoImage} /> */}
       <CustomText fontFamily={Fonts.Bold} style={styles.appText}>

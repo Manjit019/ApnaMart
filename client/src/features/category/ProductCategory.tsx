@@ -1,4 +1,4 @@
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CustomHeader from '@components/ui/CustomHeader';
 import {Colors} from '@utils/Constants';
@@ -69,10 +69,12 @@ const ProductCategory = () => {
 
   return (
     <View style={styles.mainContainer}>
+      <StatusBar translucent={false} backgroundColor="#fff" barStyle='dark-content' />
+
       <CustomHeader title={selectedCategory?.name || 'Categories'} search />
       <View style={styles.subContainer}>
         {categoriesLoading ? (
-          <ActivityIndicator size="small" color={Colors.border} />
+          <ActivityIndicator size="small" color={Colors.border} style={{width : 80}} />
         ) : (
           <Sidebar
             categories={categories}
@@ -81,7 +83,7 @@ const ProductCategory = () => {
           />
         )}
         {productsLoading ? (
-          <ActivityIndicator size="small" color={Colors.border} style={{justifyContent : 'center',alignItems : 'center'}} />
+          <ActivityIndicator size="small" color={Colors.border} style={{justifyContent : 'center',alignItems : 'center', width : '100%'}} />
         ) : (
           <ProductList data={products || []} />
         )}

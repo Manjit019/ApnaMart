@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {FC, useEffect} from 'react';
 import {useAuthStore} from '@state/authStore';
 import {screenWidth} from '@utils/Scaling';
@@ -19,6 +19,7 @@ const OrderSuccess: FC = () => {
 
   return (
     <View style={styles.container}>
+       <StatusBar translucent={false} backgroundColor="#fff" barStyle='dark-content' />
       <LottieView
         source={require('@assets/animations/confirm.json')}
         autoPlay
