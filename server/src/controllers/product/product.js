@@ -12,6 +12,23 @@ export const getProductByCategoryId = async (req, reply) => {
     }
 };
 
+export const getProductById = async (req, reply) => {
+    
+    const {productId} = req.params;
+    try {
+        const product = await Product.findById(productId).populate("category");
+
+        if(!product){
+            return res.status(404).send({message : "No product found for this id"});
+        }
+
+        return reply.send(product);
+
+    } catch (error) {
+        return res.status(500).send({message : "An Internal server error occured : ",error})
+    }
+}
+
 export const getAllProducts = async (req, reply) => {
     try {
         const products = await Product.find().select("-category").exec();

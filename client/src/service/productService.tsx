@@ -14,7 +14,7 @@ export const getAllCategories = async () => {
 export const getProductByCategoryId = async (id: string) => {
 
   try {
-    const res = await axios.get(`${BASE_URL}/product/${id}`);
+    const res = await axios.get(`${BASE_URL}/categories/${id}`);
     return res.data;
 
   } catch (error) {
@@ -23,17 +23,20 @@ export const getProductByCategoryId = async (id: string) => {
   }
 };
 
+export const getProductById = async (id:string) => {
+  try {
+    const res = await axios.get(`${BASE_URL}/product/${id}`);
+    return res.data;
+  } catch (error) {
+    console.log('Error fetching product by  id', error);
+    return [];
+  }
+}
+
 
 export const searchProducts = async (query: string, page: number, sort?: string, order?: string, maxPrice?: number, minPrice?: number, brand?: string,limit?: number,) => {
 
   try {
-    console.log( query,
-        page,
-        sort,
-        order,
-        maxPrice,
-        minPrice,
-        brand);
     const res = await axios.get(`${BASE_URL}/product/search`, {
       params: {
         q: query,

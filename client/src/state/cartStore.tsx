@@ -25,7 +25,7 @@ export const useCartStore = create<CartStore>()(
         const currentCart = get().cart;
         
         const existingItemIndex = currentCart?.findIndex(
-          cartItem => cartItem?.item._id === item?._id,
+          cartItem => cartItem?.item?._id === item?._id,
         );
 
         if (existingItemIndex >= 0) {
@@ -49,7 +49,7 @@ export const useCartStore = create<CartStore>()(
         console.log(currentCart);
         
         const existingItemIndex = currentCart.findIndex(
-          cartItem => cartItem?.item._id === id,
+          cartItem => cartItem?.item?._id === id,
         );
 
         if (existingItemIndex >= 0) {
@@ -69,12 +69,12 @@ export const useCartStore = create<CartStore>()(
         }
       },
       getItemCount: id => {
-        const currentItem = get().cart.find(cartItem => cartItem.item._id === id);
+        const currentItem = get().cart.find(cartItem => cartItem?.item?._id === id);
         return currentItem ? currentItem?.count : 0;
       },
       getTotalPrice: () => {
         return get().cart.reduce(
-          (total, cartItem) => total + cartItem?.item.price * cartItem?.count,
+          (total, cartItem) => total + cartItem?.item?.price * cartItem?.count,
           0,
         );
       },

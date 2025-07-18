@@ -1,14 +1,15 @@
 import {Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import React, {FC} from 'react';
+import React, {FC, ReactElement, ReactNode} from 'react';
 import {Colors, Fonts} from '@utils/Constants';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {goBack, navigate} from '@utils/NavigationUtils';
 import {RFValue} from 'react-native-responsive-fontsize';
 import CustomText from './CustomText';
 
-const CustomHeader: FC<{title: string; search?: boolean}> = ({
+const CustomHeader: FC<{title: string; search?: boolean,rightComponent?:ReactNode}> = ({
   title,
   search,
+  rightComponent
 }) => {
 
 
@@ -31,6 +32,9 @@ const CustomHeader: FC<{title: string; search?: boolean}> = ({
             <Icon name="search" color={Colors.text} size={RFValue(18)} />
           </TouchableOpacity>
         )}
+        {rightComponent && (
+          rightComponent
+        )}
       </View>
     </SafeAreaView>
   );
@@ -40,7 +44,7 @@ export default CustomHeader;
 
 const styles = StyleSheet.create({
   flexRow: {
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     padding: 10,
     height: 60,
     flexDirection: 'row',
@@ -51,6 +55,6 @@ const styles = StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    width : '88%'
+    // width : '83%'
   },
 });

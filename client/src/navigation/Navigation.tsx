@@ -17,6 +17,7 @@ import ProfileScreen from '@features/profile/ProfileScreen';
 import DeliveryMap from '@features/delivery/DeliveryMap';
 import CompleteProfile from '@features/auth/CompleteProfile';
 import SearchScreen from '@features/search/SearchScreen';
+import ProductDetailScreen from '@features/category/ProductDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,6 +37,9 @@ const Navigation: FC = () => {
           options={{ navigationBarHidden: true }} />
 
         <Stack.Screen name="ProductCategory" component={ProductCategory}
+          options={{ navigationBarHidden: true }} />
+
+          <Stack.Screen name="ProductDetails" component={ProductDetailScreen}
           options={{ navigationBarHidden: true }} />
 
         <Stack.Screen name="SearchScreen" component={SearchScreen}

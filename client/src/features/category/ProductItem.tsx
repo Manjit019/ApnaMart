@@ -1,26 +1,54 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {FC} from 'react';
-import {screenHeight} from '@utils/Scaling';
-import {Colors, Fonts} from '@utils/Constants';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { FC } from 'react';
+import { screenHeight } from '@utils/Scaling';
+import { Colors, Fonts } from '@utils/Constants';
 import CustomText from '@components/ui/CustomText';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import UniversalAdd from '@components/ui/UniversalAdd';
+import { navigate } from '@utils/NavigationUtils';
 
-const ProductItem: FC<{item: any; index: any}> = ({item, index}) => {
+const ProductItem: FC<{ item: any; index: any }> = ({ item, index }) => {
   const isSecondColumn = index % 2 != 0;
 
   return (
-    <View style={[styles.container, {marginRight: isSecondColumn ? 10 : 0}]}>
+    <TouchableOpacity
+      activeOpacity={0.9}
+      style={[styles.container, { marginRight: isSecondColumn ? 10 : 0 }]}
+      onPress={() => navigate('ProductDetails', { productId: item._id })}>
       <View style={styles.imageContainer}>
-        <Image source={{uri: item?.image}} style={styles.img} />
+        <Image source={{ uri: item?.image }} style={styles.img} />
 
-        <View style={styles.addBtn}>
-         <UniversalAdd item={item} />
-        </View>
+        {
+          item?.inStock ? (
+            <View style={styles.addBtn}>
+              <UniversalAdd item={item} />
+            </View>
+
+          ) : (
+            <View style={[styles.stockBadge, {
+              backgroundColor:
+                item?.inStock ? 'green' : 'red'
+            }]}>
+              <CustomText fontFamily={Fonts.SemiBold} style={styles.stockText}>
+                {
+                  item?.inStock ? 'In Stock' : 'Out of Stock'}
+              </CustomText>
+            </View>
+
+          )
+        }
+
+
       </View>
       <View style={styles.content}>
-        <View style={[{flexDirection : 'row',justifyContent : 'space-between',alignItems : 'center'}]}>
-
+        <View
+          style={[
+            {
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            },
+          ]}>
           <View style={styles.flexRow}>
             <Image
               source={require('@assets/icons/clock.png')}
@@ -38,26 +66,25 @@ const ProductItem: FC<{item: any; index: any}> = ({item, index}) => {
           fontFamily={Fonts.Medium}
           variant="h8"
           numberOfLines={2}
-          style={{marginVertical: 4}}>
+          style={{ marginVertical: 4 }}>
           {item?.name}
         </CustomText>
 
         <View style={styles.priceContainer}>
-          <View style={{flexDirection : 'row',alignItems : 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <CustomText variant="h8" fontFamily={Fonts.SemiBold}>
               ₹{item?.price}{' '}
             </CustomText>
             <CustomText
               fontFamily={Fonts.Medium}
               variant="h8"
-              style={{opacity: 0.7, textDecorationLine: 'line-through'}}>
+              style={{ opacity: 0.7, textDecorationLine: 'line-through' }}>
               ₹{item?.discountPrice}
             </CustomText>
           </View>
-
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -77,13 +104,13 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 5,
-    position : 'relative'
+    padding: 5,
+    position: 'relative',
   },
-  addBtn : {
-    position : 'absolute',
-    bottom : 5,
-    right : 5
+  addBtn: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
   },
   img: {
     height: '100%',
@@ -114,5 +141,18 @@ const styles = StyleSheet.create({
     marginTop: 'auto',
     alignItems: 'center',
     paddingVertical: 10,
+  },
+  stockBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderTopLeftRadius: 10,
+    borderBottomRightRadius: 10
+  },
+  stockText: {
+    color: '#fff',
+    fontSize: 8,
   },
 });

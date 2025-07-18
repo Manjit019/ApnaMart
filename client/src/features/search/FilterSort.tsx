@@ -43,17 +43,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     justifyContent: 'space-around',
-    paddingVertical : 4
+    paddingVertical: 4
   },
   filterBtns: {
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
   },
-  divider : {
-    width : 1,
-    height : 20,
-    backgroundColor : '#777',
-    borderRadius : 10
+  divider: {
+    width: 1,
+    height: 20,
+    backgroundColor: '#777',
+    borderRadius: 10
   }
 })
