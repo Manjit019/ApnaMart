@@ -16,6 +16,8 @@ import LiveTracking from '@features/map/LiveTracking';
 import ProfileScreen from '@features/profile/ProfileScreen';
 import DeliveryMap from '@features/delivery/DeliveryMap';
 import CompleteProfile from '@features/auth/CompleteProfile';
+import SearchScreen from '@features/search/SearchScreen';
+import ProductDetailScreen from '@features/category/ProductDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,26 +27,38 @@ const Navigation: FC = () => {
       <Stack.Navigator
         initialRouteName="SplashScreen"
         screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="SplashScreen" component={SplashScreen} 
-            options={{ navigationBarHidden: true }} />
-        <Stack.Screen name="ProductDashboard" component={ProductDashboard} 
-             options={{ navigationBarHidden: true }} />
-        <Stack.Screen name="DeliveryDashboard" component={DeliveryDashboard} 
-             options={{ navigationBarHidden: true }} />
-        <Stack.Screen name="ProductCategory" component={ProductCategory} 
-              options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="SplashScreen" component={SplashScreen}
+          options={{ navigationBarHidden: true }} />
 
-        <Stack.Screen name="ProductOrder" component={ProductOrder} 
-              options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="ProductDashboard" component={ProductDashboard}
+          options={{ navigationBarHidden: true }} />
 
-        <Stack.Screen name="OrderSuccess" component={OrderSuccess} 
-             options={{ navigationBarHidden: true }} />
-        <Stack.Screen name="LiveTracking" component={LiveTracking} 
-             options={{ navigationBarHidden: true }} />
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen} 
-             options={{ navigationBarHidden: true }} />
-        <Stack.Screen name="DeliveryMap" component={DeliveryMap} 
-             options={{ navigationBarHidden: true }} />
+        <Stack.Screen name="DeliveryDashboard" component={DeliveryDashboard}
+          options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="ProductCategory" component={ProductCategory}
+          options={{ navigationBarHidden: true }} />
+
+          <Stack.Screen name="ProductDetails" component={ProductDetailScreen}
+          options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="SearchScreen" component={SearchScreen}
+          options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="ProductOrder" component={ProductOrder}
+          options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="OrderSuccess" component={OrderSuccess}
+          options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="LiveTracking" component={LiveTracking}
+          options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen}
+          options={{ navigationBarHidden: true }} />
+
+        <Stack.Screen name="DeliveryMap" component={DeliveryMap}
+          options={{ navigationBarHidden: true }} />
 
         <Stack.Screen
           options={{
@@ -57,7 +71,7 @@ const Navigation: FC = () => {
         <Stack.Screen
           options={{
             animation: 'fade',
-            navigationBarHidden : true
+            navigationBarHidden: true
           }}
           name="CustomerLogin"
           component={CustomerLogin}
@@ -65,7 +79,7 @@ const Navigation: FC = () => {
         <Stack.Screen
           options={{
             animation: 'ios_from_right',
-            navigationBarHidden : true
+            navigationBarHidden: true
           }}
           name="CompleteProfile"
           component={CompleteProfile}

@@ -8,19 +8,19 @@ const OrderItem: FC<{item: any}> = ({item}) => {
   return (
     <View style={[styles.flexRow, {borderTopWidth: 0.7}]}>
       <View style={styles.imgContainer}>
-        <Image source={{uri: item?.item.image}} style={styles.img} />
+        <Image source={{uri: item?.item?.image}} style={styles.img} />
       </View>
 
       <View style={{width: '55%'}}>
         <CustomText numberOfLines={2} variant="h8" fontFamily={Fonts.Medium}>
-          {item?.item.name}
+          {item?.item?.name}
         </CustomText>
 
-        <CustomText variant="h9">{item?.item.quantity}</CustomText>
+        <CustomText variant="h9">{item?.item?.quantity}</CustomText>
 
         <View style={[styles.flexRow,{paddingHorizontal  : 0,paddingVertical : 0,marginTop : 5}]}>
           <CustomText fontFamily={Fonts.SemiBold}>
-            ₹{item.count * item.item.price}
+            ₹{item?.count * item?.item?.price}
           </CustomText>
           <CustomText
             variant="h8"
@@ -29,13 +29,13 @@ const OrderItem: FC<{item: any}> = ({item}) => {
               opacity: 0.5,
               textDecorationLine: 'line-through',
             }}>
-            ₹{item.count * item.item.discountPrice}
+            ₹{item?.count * item?.item?.discountPrice}
           </CustomText>
         </View>
       </View>
 
       <View style={{width: '20%', alignItems: 'flex-end'}}>
-        <UniversalAdd item={item.item} />
+        <UniversalAdd item={item?.item} />
       </View>
     </View>
   );

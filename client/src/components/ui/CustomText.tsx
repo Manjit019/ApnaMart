@@ -10,7 +10,7 @@ interface Props {
     children?:React.ReactNode;
     numberOfLines?:number;
     onLayout?:(event:object) => void;
-    style?:TextStyle | TextStyle[];
+    style?:TextStyle | TextStyle[] ;
 }
 
 const CustomText:React.FC<Props> = ({

@@ -1,5 +1,5 @@
 import { Alert, Modal, NativeSyntheticEvent, StyleSheet, Text, TextInput, TextInputKeyPressEventData, TouchableOpacity, View } from 'react-native'
-import React, { FC, useEffect, useRef, useState } from 'react'
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import CustomText from '@components/ui/CustomText';
 import { Colors, Fonts } from '@utils/Constants';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -13,13 +13,16 @@ interface OtpModalProps {
     onResend: () => void;
 }
 
+const OTP_LENGTH = 6;
+const RESEND_TIMER_DURATION = 30;
+
 const OtpModal: FC<OtpModalProps> = ({ isVisible, onClose, onConfirm, isVerified, onResend }) => {
 
     const [loading, setLoading] = useState(false);
     const [resendTimer, setResendTimer] = useState(30);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const [otp, setOtp] = useState<any[]>(new Array(6).fill(''));
+    const [otp, setOtp] = useState<any[]>(new Array(OTP_LENGTH).fill(''));
     const inputRefs = useRef<any>([]);
 
     const handleChange = (text: string, index: number) => {
@@ -38,7 +41,7 @@ const OtpModal: FC<OtpModalProps> = ({ isVisible, onClose, onConfirm, isVerified
         if (/^\d$/.test(text)) {
             newOtp[index] = text;
             setOtp(newOtp);
-            if (index < 5) {
+            if (index < OTP_LENGTH) {
                 setTimeout(() => inputRefs.current[index + 1]?.focus(), 10);
             }
         }
@@ -47,36 +50,59 @@ const OtpModal: FC<OtpModalProps> = ({ isVisible, onClose, onConfirm, isVerified
     const handleVerify = async () => {
         setLoading(true);
         const code = otp.join('');
-        if (code.length < 6) return;
+        if (code.length < OTP_LENGTH) return;
         onConfirm(code);
     }
 
-    useEffect(() => {
-        if (isVisible) {
-            startTimer();
-            setTimeout(() => inputRefs.current[0]?.focus(), 100);
-        }
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
-    }, [isVisible]);
 
-    const startTimer = () => {
-        setResendTimer(30);
-        if (timerRef.current) clearInterval(timerRef.current);
+    const clearTimer = useCallback(() => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+    }, []);
+
+    const startTimer = useCallback(() => {
+        setResendTimer(RESEND_TIMER_DURATION);
+        clearTimer();
+
         timerRef.current = setInterval(() => {
             setResendTimer((prev) => {
-                if (prev === 1 && timerRef.current) {
-                    clearInterval(timerRef.current);
+                if (prev <= 1) {
+                    clearTimer();
                     return 0;
                 }
                 return prev - 1;
             });
         }, 1000);
-    };
+    }, [clearTimer]);
+
+
+    const handleClose = useCallback(() => {
+        onClose();
+        setLoading(false);
+        setOtp(new Array(OTP_LENGTH).fill(''));
+        setResendTimer(RESEND_TIMER_DURATION);
+        clearTimer();
+    }, [onClose, clearTimer]);
+
+
+    useEffect(() => {
+        if (isVisible) {
+            setOtp(new Array(OTP_LENGTH).fill(''));
+            setLoading(false);
+            startTimer();
+
+            setTimeout(() => inputRefs.current[0]?.focus(), 300);
+        }
+
+        return () => {
+            clearTimer();
+        };
+    }, [isVisible]);
 
     return (
-        <Modal visible={isVisible} onRequestClose={onClose} animationType="slide" statusBarTranslucent presentationStyle='formSheet' style={styles.container} backdropColor={'rgba(0, 0, 0, 0.24)'} >
+        <Modal visible={isVisible} onRequestClose={handleClose} animationType="slide" statusBarTranslucent presentationStyle='formSheet' style={styles.container} backdropColor={'rgba(0, 0, 0, 0.24)'} >
             <View style={styles.modalContainer}>
                 <CustomText variant='h5' fontFamily={Fonts.Bold} >Enter OTP</CustomText>
                 <CustomText variant='h7' style={{ opacity: 0.7, marginVertical: 3, width: '87%' }}>We have sent you a OTP to your phone number.</CustomText>
@@ -102,7 +128,7 @@ const OtpModal: FC<OtpModalProps> = ({ isVisible, onClose, onConfirm, isVerified
                     ))}
                 </View>
 
-                <CustomButton title={!isVerified ?( loading ? "Verifying.." : "Verify OTP") : "Signing in..."} loading={loading} disabled={loading || otp.join().length < 6} onPress={handleVerify} />
+                <CustomButton title={!isVerified ? (loading ? "Verifying.." : "Verify OTP") : "Signing in..."} loading={loading} disabled={loading || otp.join().length < OTP_LENGTH} onPress={handleVerify} />
 
                 <View style={styles.resendContainer}>
                     <CustomText variant="body">
@@ -165,7 +191,8 @@ const styles = StyleSheet.create({
         height: 50,
         fontSize: RFValue(18),
         textAlign: 'center',
-        fontFamily: Fonts.Bold
+        fontFamily: Fonts.Bold,
+        backgroundColor : '#f1f1f1'
     },
     resendContainer: {
         alignItems: 'center',

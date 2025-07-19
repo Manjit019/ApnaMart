@@ -110,7 +110,8 @@ const CustomerLogin: FC = () => {
 
     } catch (error: any) {
       console.log("OTP Verification Failed :", error);
-      Alert.alert('OTP Verification Failed!', error?.message);
+      Alert.alert('Login Failed!',"Something went wrong ,Please try again!" );
+      setModalVisible(false);
       setIsOtpVerified(false);
     }
 
