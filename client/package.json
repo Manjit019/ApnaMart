@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^5.1.6",
     "@homielab/react-native-auto-scroll": "^0.0.10",
     "@r0b0t3d/react-native-collapsible": "^1.4.3",
     "@react-native-community/geolocation": "^3.4.0",

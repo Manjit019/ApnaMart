@@ -33,6 +33,10 @@ export const admin = new AdminJS({
             resource: Models.Product,
         
         },
+        {
+            resource: Models.Coupon,
+        
+        },
         { resource: Models.Order ,
             options : {
                 listProperties: ["orderId","customer","deliveryPartner","branch","items","totalPrice" ,"status"]

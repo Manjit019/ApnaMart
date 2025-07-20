@@ -1,13 +1,15 @@
 import {appAxios} from './apiInterceptors';
 import {BRANCH_ID} from './config';
 
-export const createOrder = async (item: any, totalPrice: number) => {
+export const createOrder = async (item: any, totalPrice: number,coupon:string,finalTotal : number) => {
   
   try {
     const res = await appAxios.post('/order', {
       items: item,
       branch: BRANCH_ID ,
       totalPrice: totalPrice,
+      coupon ,
+      finalTotal
     });
     return res.data;
   } catch (error) {

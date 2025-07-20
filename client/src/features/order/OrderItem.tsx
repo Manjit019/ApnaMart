@@ -11,7 +11,7 @@ const OrderItem: FC<{item: any}> = ({item}) => {
         <Image source={{uri: item?.item?.image}} style={styles.img} />
       </View>
 
-      <View style={{width: '55%'}}>
+      <View style={{width: '58%'}}>
         <CustomText numberOfLines={2} variant="h8" fontFamily={Fonts.Medium}>
           {item?.item?.name}
         </CustomText>
@@ -62,5 +62,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 12,
     borderTopColor: Colors.border,
+
   },
 });

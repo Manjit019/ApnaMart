@@ -8,10 +8,11 @@ interface CustomButtonProps {
     disabled: boolean;
     loading: boolean;
     customStyle?: ViewStyle;
+    loadingText?:string;
 }
 
 
-const CustomButton: React.FC<CustomButtonProps> = ({ onPress, title, disabled, loading, customStyle }) => {
+const CustomButton: React.FC<CustomButtonProps> = ({ onPress, title, disabled, loading, customStyle,loadingText }) => {
     return (
         <TouchableOpacity style={[styles.button, {
             backgroundColor: disabled ? Colors.disabled : Colors.secondary
@@ -20,7 +21,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({ onPress, title, disabled, l
             {loading ?
                 <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'center', alignItems: 'center' }}>
                     <ActivityIndicator size='small' color='white' />
-                    <CustomText variant="h6" fontFamily={Fonts.SemiBold} style={styles.text}> {title}</CustomText>
+                    <CustomText variant="h6" fontFamily={Fonts.SemiBold} style={styles.text}> {loadingText || ''}</CustomText>
                 </View>
                 :
                 <CustomText variant="h6" fontFamily={Fonts.SemiBold} style={styles.text}> {title}</CustomText>
