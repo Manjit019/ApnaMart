@@ -1,11 +1,11 @@
-import {ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect} from 'react';
-import {useAuthStore} from '@state/authStore';
-import {getOrderById} from '@service/orderService';
-import {Colors, Fonts} from '@utils/Constants';
+import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { useAuthStore } from '@state/authStore';
+import { getOrderById } from '@service/orderService';
+import { Colors, Fonts } from '@utils/Constants';
 import LiveHeader from './LiveHeader';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import CustomText from '@components/ui/CustomText';
 import OrderSummary from './OrderSummary';
 import DeliveryDetails from './DeliveryDetails';
@@ -14,43 +14,55 @@ import { screenHeight } from '@utils/Scaling';
 import OrderProgress from './OrderProgress';
 
 const LiveTracking = () => {
-  const {currentOrder, setCurrentOrder} = useAuthStore();
+  const { currentOrder, setCurrentOrder } = useAuthStore();
 
   const fetchOrderDetails = async () => {
     const data = await getOrderById(currentOrder?._id as any);
     setCurrentOrder(data);
   };
-  
+
   useEffect(() => {
     fetchOrderDetails();
-    console.log("currentOrder: " + currentOrder);
   }, []);
 
-  let msg = 'Packing your order';
+  let msg = 'Order Placed!';
   let time = 'Arriving in 16 minutes...';
   let step = 0;
+
+
   if (currentOrder?.status === 'confirmed') {
-    msg = 'Arriving soon';
+    msg = 'Order Confirmed';
     time = 'Arriving in 10 minutes...';
-    step = 1
-  } else if (currentOrder?.status === 'arriving') {
+    step = 1;
+  }
+  else if (currentOrder?.status === 'arriving') {
     msg = 'Order Picked Up';
     time = 'Arriving in 6 minutes...';
-    step = 2
-  } else if (currentOrder?.status === 'delivered') {
+    step = 2;
+  } else if (currentOrder?.status === 'out for delivery') {
+    msg = 'Out for delivery';
+    time = 'Arriving in 2 minutes...';
+    step = 3;
+    setCurrentOrder(null);
+  }
+
+  else if (currentOrder?.status === 'delivered') {
     msg = 'Order Delivered';
     time = 'Fasted Delivery.';
-    step=3
+    step = 4;
   }
 
   return (
     <View style={styles.container}>
-       <StatusBar translucent={false} backgroundColor={Colors.secondary} barStyle='light-content' />
+      <StatusBar
+        translucent={false}
+        backgroundColor={Colors.secondary}
+        barStyle="light-content"
+      />
       <LiveHeader type="Customer" title={msg} secondaryTitle={time} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}>
-
         {/* <LiveMap 
           deliveryLocation={currentOrder?.deliveryLocation}
           pickupLocation={currentOrder?.pickupLocation}
@@ -58,8 +70,8 @@ const LiveTracking = () => {
           hasAccepted={currentOrder?.status == 'confirmed'}
           hasPickedUp={currentOrder?.status == 'arriving'}
         /> */}
-        
-          <OrderProgress currentStep={step} />
+
+        <OrderProgress currentStep={step} />
 
         <View style={styles.flexRow}>
           <View style={styles.iconContainer}>
@@ -69,7 +81,7 @@ const LiveTracking = () => {
               size={RFValue(20)}
             />
           </View>
-          <View style={{width: '82%'}}>
+          <View style={{ width: '82%' }}>
             <CustomText
               numberOfLines={1}
               variant="h7"
@@ -78,14 +90,14 @@ const LiveTracking = () => {
                 'We will soon assign delivery partner'}
             </CustomText>
 
-            { currentOrder?.deliveryPartner && 
+            {currentOrder?.deliveryPartner && (
               <CustomText
-              numberOfLines={1}
-              variant="h6"
-              fontFamily={Fonts.Medium}>
-              {currentOrder?.deliveryPartner?.phone}
-            </CustomText>
-          }
+                numberOfLines={1}
+                variant="h6"
+                fontFamily={Fonts.Medium}>
+                {currentOrder?.deliveryPartner?.phone}
+              </CustomText>
+            )}
             <CustomText
               numberOfLines={1}
               variant="h9"
@@ -101,18 +113,32 @@ const LiveTracking = () => {
 
         <OrderSummary order={currentOrder} />
 
-        <View style={[styles.flexRow,{borderColor:Colors.border,borderWidth: 1}]}>
-              <View style={styles.iconContainer}>
-                  <Icon name='cards-heart-outline' color={Colors.disabled} size={RFValue(20)} />
-              </View>
-              <View style={{width : '82%'}}>
-                  <CustomText variant='h7' fontFamily={Fonts.SemiBold}>Do You Like Our App ?</CustomText>
-                  <CustomText variant='h9' fontFamily={Fonts.Regular}>Hit the Like button if you really love our app.</CustomText>
-
-              </View>
+        <View
+          style={[
+            styles.flexRow,
+            { borderColor: Colors.border, borderWidth: 1 },
+          ]}>
+          <View style={styles.iconContainer}>
+            <Icon
+              name="cards-heart-outline"
+              color={Colors.disabled}
+              size={RFValue(20)}
+            />
+          </View>
+          <View style={{ width: '82%' }}>
+            <CustomText variant="h7" fontFamily={Fonts.SemiBold}>
+              Do You Like Our App ?
+            </CustomText>
+            <CustomText variant="h9" fontFamily={Fonts.Regular}>
+              Hit the Like button if you really love our app.
+            </CustomText>
+          </View>
         </View>
 
-        <CustomText variant='h8' fontFamily={Fonts.SemiBold} style={{marginTop : 30,opacity : 0.5,textAlign : 'center'}}>
+        <CustomText
+          variant="h8"
+          fontFamily={Fonts.SemiBold}
+          style={{ marginTop: 30, opacity: 0.5, textAlign: 'center' }}>
           Manjit x Coder's Space Grocery Delivery App
         </CustomText>
       </ScrollView>
@@ -126,16 +152,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.secondary,
-  }, 
-  progressContainer : {
-    height : screenHeight * 0.35,
-    width : '100%',
-    borderRadius : 16,
-    backgroundColor : '#fff',
-    overflow : 'hidden',
-    borderWidth : 1,
-    borderColor : Colors.border,
-    position : 'relative'
+  },
+  progressContainer: {
+    height: screenHeight * 0.35,
+    width: '100%',
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    position: 'relative',
   },
   scrollContainer: {
     paddingBottom: 150,

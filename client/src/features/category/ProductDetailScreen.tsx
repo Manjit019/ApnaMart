@@ -22,6 +22,7 @@ interface Product {
     discountPrice: number;
     quantity: string;
     description: string;
+    image ?:string;
     images: string[];
     category: { name: string };
     brand?: string;
@@ -53,9 +54,7 @@ const ProductDetailScreen: FC = () => {
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [showFullDescription, setShowFullDescription] = useState(false);
-    const [activeTab, setActiveTab] = useState<'details' | 'nutrition' | 'reviews'>('details');
-
-
+  
 
     const ref = useRef<ICarouselInstance>(null);
     const progress = useSharedValue<number>(0);
@@ -158,7 +157,7 @@ const ProductDetailScreen: FC = () => {
                         pagingEnabled
                         snapEnabled
                         mode="parallax"
-                        data={product.images || []}
+                        data={product.images || product.image ||[]}
                         modeConfig={{ parallaxScrollingOffset: 0, parallaxScrollingScale: 1 }}
                         renderItem={({ item }: { item: string }) => (
                             <ScalePress style={styles.imageContainer}>

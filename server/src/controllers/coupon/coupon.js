@@ -43,7 +43,7 @@ export const applyCoupon = async (req,reply) => {
 
         return reply.send({
             message : "Coupon Applied",
-            discount,
+            discount, 
             finalTotal,
             coupon : coupon.code,
             couponId : coupon._id

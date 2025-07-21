@@ -8,7 +8,7 @@ import {
   Alert,
   StatusBar,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomHeader from '@components/ui/CustomHeader';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Colors, Fonts } from '@utils/Constants';
@@ -26,14 +26,16 @@ import { createOrder } from '@service/orderService';
 import { navigate } from '@utils/NavigationUtils';
 import CouponSheet from './CouponSheet';
 import { EXTRACHARGES } from '@service/config';
+import { useCouponStore } from '@state/couponStore';
+import { applyCoupon } from '@service/couponService';
 
 const ProductOrder = () => {
   const { getTotalPrice, cart, clearCart } = useCartStore();
   const { user, setCurrentOrder, currentOrder } = useAuthStore();
-
+  const { appliedCoupon: couponResult, clearCoupon, setCoupon } = useCouponStore() as any;
   const [loading, setLoading] = useState(false);
   const [couponSheetVisible, setCouponSheetVisible] = useState(false);
-  const [couponResult, setCouponResult] = useState<any>(null);
+
 
   const totalItemPrice = getTotalPrice();
 
@@ -54,23 +56,38 @@ const ProductOrder = () => {
       Alert.alert('Add any items to place order');
       return;
     }
+    const payableAmount = couponResult?.success ? couponResult?.finalTotal : totalItemPrice + EXTRACHARGES
 
     setLoading(true);
     const data = await createOrder(
       formattedData,
-      totalItemPrice + EXTRACHARGES - couponResult?.discount as number,
+      payableAmount,
       couponResult?.couponId,
-      couponResult?.finalTotal
     );
 
     if (data != null) {
       setCurrentOrder(data);
       clearCart();
+      clearCoupon();
       navigate('OrderSuccess', { ...data });
     }
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    const revalidateCoupon = async () => {
+      if (!couponResult?.coupon) return;
+      try {
+        const data = await applyCoupon(couponResult.coupon, totalItemPrice + EXTRACHARGES);
+        setCoupon(data);
+      } catch (error) {
+        console.log('Failed to revalidate coupon:', error);
+      }
+    };
+    revalidateCoupon();
+
+  }, [totalItemPrice]);
 
   return (
     <View style={styles.container}>
@@ -120,6 +137,10 @@ const ProductOrder = () => {
               style={{ color: '#2fab54d7' }}>
               Congrats! You have got discount of ₹{couponResult?.discount}
             </CustomText>
+
+            <TouchableOpacity style={styles.removeBtn} onPress={() => clearCoupon()} >
+              <Icon name='close-circle' color={'#707471f8'} size={18} />
+            </TouchableOpacity>
           </View>
         ) : (
           <TouchableOpacity
@@ -206,7 +227,7 @@ const ProductOrder = () => {
             <View style={{ width: '70%' }}>
               <ArrowButton
                 loading={loading}
-                price={couponResult?.success ? couponResult?.finalTotal : totalItemPrice}
+                price={couponResult?.success ? totalItemPrice + EXTRACHARGES - couponResult?.discount : totalItemPrice + EXTRACHARGES}
                 title="Place Order"
                 onPress={handlePlaceOrder}
               />
@@ -218,7 +239,6 @@ const ProductOrder = () => {
       {couponSheetVisible && (
         <CouponSheet
           onClose={() => setCouponSheetVisible(false)}
-          onResult={setCouponResult}
         />
       )}
     </View>
@@ -289,6 +309,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     color: '#168e3aff',
   },
+  removeBtn: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+
+  }
 });
 
 export default ProductOrder;

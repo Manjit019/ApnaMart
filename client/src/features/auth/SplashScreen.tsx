@@ -70,8 +70,7 @@ const SplashScreen: FC = () => {
     const fetchUserLocation = async () => {
       try {
         GeoLocation.requestAuthorization();
-        // tokenCheck();
-        resetAndNavigate('ProductDashboard');
+        tokenCheck();
       } catch (error) {
         Alert.alert(
           'Sorry we need location service to give you better shopping experience',

@@ -1,18 +1,20 @@
 import CustomText from '@components/ui/CustomText';
-import {Fonts} from '@utils/Constants';
-import {screenHeight} from '@utils/Scaling';
-import React, {FC, useEffect} from 'react';
-import {View, StyleSheet, Animated} from 'react-native';
+import { Fonts } from '@utils/Constants';
+import { screenHeight } from '@utils/Scaling';
+import React, { FC, useEffect } from 'react';
+import { View, StyleSheet, Animated } from 'react-native';
+import { RFValue } from 'react-native-responsive-fontsize';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const steps = [
-  {title: 'Order Confirmed', icon: 'checkbox-marked-circle'},
-  {title: 'Picked Up', icon: 'store-check'},
-  {title: 'Out for Delivery', icon: 'motorbike'},
-  {title: 'Delivered', icon: 'package-variant'},
+  { title: 'Order Placed', icon: 'circle' },
+  { title: 'Order Confirmed', icon: 'checkbox-marked-circle' },
+  { title: 'Picked Up', icon: 'store-check' },
+  { title: 'Out for Delivery', icon: 'motorbike' },
+  { title: 'Delivered', icon: 'package-variant' },
 ];
 
-const ProgressTracker:FC<{currentStep : number}> = ({currentStep}) => {
+const ProgressTracker: FC<{ currentStep: number }> = ({ currentStep }) => {
   const progress = React.useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const ProgressTracker:FC<{currentStep : number}> = ({currentStep}) => {
           <Animated.View
             style={[
               styles.filledProgress,
-              {width: progressInterpolate, backgroundColor: colorInterpolate},
+              { width: progressInterpolate, backgroundColor: colorInterpolate },
             ]}
           />
         </View>
@@ -60,7 +62,7 @@ const ProgressTracker:FC<{currentStep : number}> = ({currentStep}) => {
               key={index}
               style={[
                 styles.stepContainer,
-                {left: `${index * (100 / (steps.length - 1))}%`},
+                { left: `${index * (100 / (steps.length - 1))}%` },
               ]}>
               <Animated.View
                 style={[
@@ -89,7 +91,7 @@ const ProgressTracker:FC<{currentStep : number}> = ({currentStep}) => {
                 />
               </Animated.View>
               <CustomText
-                variant="h9"
+                fontSize={RFValue(6.5)}
                 fontFamily={Fonts.Medium}
                 style={[
                   styles.stepTitle,
@@ -135,7 +137,7 @@ const styles = StyleSheet.create({
   stepContainer: {
     position: 'absolute',
     alignItems: 'center',
-    transform: [{translateX: -25}],
+    transform: [{ translateX: -25 }],
   },
   stepCircle: {
     width: 35,
