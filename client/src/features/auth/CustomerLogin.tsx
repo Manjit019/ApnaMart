@@ -9,8 +9,9 @@ import {
   StatusBar,
   ToastAndroid,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, {FC, useEffect, useRef, useState, useCallback} from 'react';
 import {
   GestureHandlerRootView,
   PanGestureHandler,
@@ -18,24 +19,28 @@ import {
 } from 'react-native-gesture-handler';
 import CustomSafeAreaView from '@components/global/CustomSafeAreaView';
 import ProductSlider from '@components/login/ProductSlider';
-import { navigate, resetAndNavigate } from '@utils/NavigationUtils';
+import {navigate, resetAndNavigate} from '@utils/NavigationUtils';
 import CustomText from '@components/ui/CustomText';
-import { Colors, Fonts, lightColors } from '@utils/Constants';
+import {Colors, Fonts, lightColors} from '@utils/Constants';
 import CustomInput from '@components/ui/CustomInput';
 import CustomButton from '@components/ui/CustomButton';
 import useKeyboardOffsetHeight from '@utils/useKeyboardOffsetHeight';
-import { RFValue } from 'react-native-responsive-fontsize';
+import {RFValue} from 'react-native-responsive-fontsize';
 import LinearGradient from 'react-native-linear-gradient';
-import { customerLogin } from '@service/authService';
-import { useAuthStore } from '@state/authStore';
+import {customerLogin} from '@service/authService';
+import {useAuthStore} from '@state/authStore';
 import OtpModal from '@components/login/OtpModal';
 import auth from '@react-native-firebase/auth';
-import GeoLocation from '@react-native-community/geolocation'
-import { requestLocationPermission } from '@utils/permissions';
 import Geolocation from '@react-native-community/geolocation';
-
+import {requestLocationPermission} from '@utils/permissions';
 
 const bottomColors = [...lightColors].reverse();
+
+interface LocationData {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
+}
 
 const CustomerLogin: FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -43,16 +48,20 @@ const CustomerLogin: FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [locationPermissionGranted, setLocationPermissionGranted] =
+    useState(false);
+  const [userLocation, setUserLocation] = useState<LocationData | null>(null);
 
   const [gestureSequence, setGestureSequence] = useState<string[]>([]);
   const keyboardOffsetHeight = useKeyboardOffsetHeight();
 
-  const { user, setUser} = useAuthStore();
+  const {user, setUser} = useAuthStore();
 
   const animatedValue = useRef(new Animated.Value(0)).current;
 
+  // Keyboard animation
   useEffect(() => {
-    if (keyboardOffsetHeight == 0) {
+    if (keyboardOffsetHeight === 0) {
       Animated.timing(animatedValue, {
         toValue: 0,
         duration: 400,
@@ -65,110 +74,267 @@ const CustomerLogin: FC = () => {
         useNativeDriver: true,
       }).start();
     }
-  }, [keyboardOffsetHeight]);
+  }, [keyboardOffsetHeight, animatedValue]);
 
-  const sendOtp = async () => {
+  const requestLocationAndGetPosition = useCallback(async () => {
+    try {
+      const hasPermission = await requestLocationPermission();
+      setLocationPermissionGranted(hasPermission);
+
+      if (!hasPermission) {
+        console.log('Location permission denied');
+        return;
+      }
+
+      Geolocation.getCurrentPosition(
+        position => {
+          const {latitude, longitude, accuracy} = position.coords;
+          const locationData: LocationData = {latitude, longitude, accuracy};
+          setUserLocation(locationData);
+          const currentUser = useAuthStore.getState().user;
+          useAuthStore.getState().setUser({
+            ...currentUser,
+            location: locationData,
+          });
+        },
+        error => {
+          console.error('Error getting location:', error);
+          switch (error.code) {
+            case 1:
+              ToastAndroid.show(
+                'Location permission denied',
+                ToastAndroid.SHORT,
+              );
+              break;
+            case 2:
+              ToastAndroid.show('Location unavailable', ToastAndroid.SHORT);
+              break;
+            case 3:
+              ToastAndroid.show('Location request timeout', ToastAndroid.SHORT);
+              break;
+            default:
+              ToastAndroid.show('Unknown location error', ToastAndroid.SHORT);
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 300000, // 5 minutes
+        },
+      );
+    } catch (error) {
+      console.error('Error requesting location:', error);
+    }
+  }, [setUser]);
+
+  useEffect(() => {
+    requestLocationAndGetPosition();
+  }, [requestLocationAndGetPosition]);
+
+  const sendOtp = useCallback(async () => {
     Keyboard.dismiss();
     setLoading(true);
 
     if (!phoneNumber || phoneNumber.length !== 10) {
-      Alert.alert('Invalid Phone Number', 'Please enter a valid 10-digit phone number.');
+      Alert.alert(
+        'Invalid Phone Number',
+        'Please enter a valid 10-digit phone number.',
+      );
       setLoading(false);
       return;
     }
 
     try {
-      const confirmation = await auth().signInWithPhoneNumber(`+91${phoneNumber}`);
-      console.log(confirmation);
-
+      const confirmation = await auth().signInWithPhoneNumber(
+        `+91${phoneNumber}`,
+      );
+      console.log('OTP sent successfully');
       setConfirm(confirmation);
       setModalVisible(true);
+    } catch (error: any) {
+      console.error('Failed to send OTP:', error);
+      let errorMessage = 'Failed to send OTP';
+      if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many requests. Please try again later.';
+      } else if (error.code === 'auth/invalid-phone-number') {
+        errorMessage = 'Invalid phone number format.';
+      }
 
-    } catch (error) {
-      console.log("Failed to send OTP : ", error);
-      ToastAndroid.show("Failed to send OTP ", ToastAndroid.SHORT);
-    }
-    finally {
+      if (Platform.OS === 'android') {
+        ToastAndroid.show(errorMessage, ToastAndroid.SHORT);
+      } else {
+        Alert.alert('Error', errorMessage);
+      }
+    } finally {
       setLoading(false);
     }
-  }
+  }, [phoneNumber]);
 
-  const verifyOTP = async (code: string) => {
+  const verifyOTP = useCallback(
+    async (code: string) => {
+      if (code.length !== 6) return;
 
-    if (code.length != 6) return;
+      try {
+        if (!confirm) {
+          throw new Error('No confirmation object available');
+        }
 
-    try {
-      await confirm.confirm(code);
+        await confirm.confirm(code);
+        setIsOtpVerified(true);
+        return true;
+      } catch (error: any) {
+        console.error('OTP Verification Failed:', error);
 
-      setIsOtpVerified(true);
+        let errorMessage = 'Invalid OTP. Please try again.';
+        if (error.code === 'auth/invalid-verification-code') {
+          errorMessage = 'Invalid verification code.';
+        } else if (error.code === 'auth/code-expired') {
+          errorMessage = 'Verification code has expired.';
+        }
 
-      handleLogin();
+        Alert.alert('Verification Failed', errorMessage);
+        return false;
+      }
+    },
+    [confirm],
+  );
 
-    } catch (error: any) {
-      console.log("OTP Verification Failed :", error);
-      Alert.alert('Login Failed!', "Something went wrong ,Please try again!");
-      setModalVisible(false);
-      setIsOtpVerified(false);
+  const handleLogin = useCallback(async () => {
+    if (!phoneNumber || phoneNumber.length !== 10) {
+      Alert.alert(
+        'Invalid Phone Number',
+        'Please enter a valid 10-digit phone number.',
+      );
+      return;
     }
+    setLoading(true);
+    try {
+      const loginData = await customerLogin(
+        phoneNumber,
+        isOtpVerified,
+        userLocation,
+      );
 
-  }
+      if (!loginData) {
+        throw new Error('Login failed - no data received');
+      }
+      if (loginData.phoneVerified && loginData.customer) {
+        console.log('User already verified, logging in directly');
+        setUser(loginData.customer);
 
-  const handleLogin = async () => {
-     const data = await customerLogin(phoneNumber, isOtpVerified, user?.location);
-     setUser(data.customer);
-
-      if (data.customer.name === "User" || !data.customer.address) {
-        navigate("CompleteProfile");
-        console.log("User haven't completed Profile ");
+        if (loginData.customer.name === 'User' || !loginData.customer.address) {
+          console.log("User hasn't completed profile");
+          navigate('CompleteProfile');
+          return;
+        }
+        resetAndNavigate('ProductDashboard');
         return;
       }
-      resetAndNavigate('ProductDashboard');
 
-  }
-
-  const handleGesture = ({ nativeEvent }: any) => {
-    if (nativeEvent.state === State.END) {
-      const { translationX, translationY } = nativeEvent;
-
-      let direction = '';
-      if (Math.abs(translationX) > Math.abs(translationY)) {
-        direction = translationX > 0 ? 'right' : 'left';
-      } else {
-        direction = translationY > 0 ? 'down' : 'up';
+      if (!loginData.phoneVerified) {
+        console.log('Phone verification required, sending OTP');
+        setIsOtpVerified(false);
+        await sendOtp();
+        return;
       }
-      const newSequence = [...gestureSequence, direction].slice(-5);
-
-      setGestureSequence(newSequence);
-
-      if (newSequence.join(' ') === 'down down left right up') {
-        setGestureSequence([]);
-        resetAndNavigate('DeliveryLogin');
-      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      const errorMessage = error.message || 'Login failed. Please try again.';
+      Alert.alert('Login Failed', errorMessage);
+      setIsOtpVerified(false);
+      setModalVisible(false);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [phoneNumber, isOtpVerified, userLocation, sendOtp, setUser]);
 
-  useEffect(() => {
-    const fetchLocation = async () => {
-      const hasPermission = await PermissionsAndroid.check('android.permission.ACCESS_FINE_LOCATION');
-      if (!hasPermission) return;
 
-      Geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude, accuracy } = position.coords;
-         setUser((prev:any)=> ({ ...prev, location: { latitude, longitude ,accuracy } }));
+  const handlePostOtpLogin = useCallback(async () => {
+    setLoading(true);
+    try {
+      const loginData = await customerLogin(
+        phoneNumber,
+        true,
+        userLocation,
+      );
 
-      }, (err) => {
-        console.error("Error while getting user location", err);
-      }, {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 10000,
-      })
-    };
+      if (!loginData || !loginData.customer) {
+        throw new Error('Login failed after OTP verification');
+      }
 
-    fetchLocation();
+      setUser(loginData.customer);
+      if (loginData.customer.name === 'User' || !loginData.customer.address) {
+        console.log("User hasn't completed profile");
+        setModalVisible(false);
+        navigate('CompleteProfile');
+        return;
+      }
+      setModalVisible(false);
+      resetAndNavigate('ProductDashboard');
+    } catch (error: any) {
+      console.error('Post-OTP login error:', error);
+      Alert.alert(
+        'Login Failed',
+        'Failed to complete login after verification',
+      );
+      setModalVisible(false);
+    } finally {
+      setLoading(false);
+    }
+  }, [phoneNumber, userLocation, setUser]);
 
-  }, [])
+  const handleGesture = useCallback(
+    ({nativeEvent}: any) => {
+      if (nativeEvent.state === State.END) {
+        const {translationX, translationY} = nativeEvent;
 
+        let direction = '';
+        if (Math.abs(translationX) > Math.abs(translationY)) {
+          direction = translationX > 0 ? 'right' : 'left';
+        } else {
+          direction = translationY > 0 ? 'down' : 'up';
+        }
+
+        const newSequence = [...gestureSequence, direction].slice(-5);
+        setGestureSequence(newSequence);
+
+        if (newSequence.join(' ') === 'down down left right up') {
+          setGestureSequence([]);
+          resetAndNavigate('DeliveryLogin');
+        }
+      }
+    },
+    [gestureSequence],
+  );
+
+  const handlePhoneNumberChange = useCallback((text: string) => {
+    const cleaned = text.replace(/[^0-9]/g, '').slice(0, 10);
+    setPhoneNumber(cleaned);
+  }, []);
+
+  const handleClearPhone = useCallback(() => {
+    setPhoneNumber('');
+  }, []);
+
+  const handleModalClose = useCallback(() => {
+    setModalVisible(false);
+    setIsOtpVerified(false);
+    setConfirm(null);
+  }, []);
+
+  const handleOtpConfirm = useCallback(
+    async (code: string) => {
+      const verified = await verifyOTP(code);
+      if (verified) {
+        await handlePostOtpLogin();
+      }
+    },
+    [verifyOTP, handlePostOtpLogin],
+  );
+
+  const handleResendOtp = useCallback(async () => {
+    await sendOtp();
+  }, [sendOtp]);
 
   return (
     <GestureHandlerRootView style={styles.container}>
@@ -183,19 +349,24 @@ const CustomerLogin: FC = () => {
           <PanGestureHandler onHandlerStateChange={handleGesture}>
             <Animated.ScrollView
               bounces={false}
-              keyboardDismissMode={'on-drag'}
-              keyboardShouldPersistTaps={'handled'}
+              keyboardDismissMode="on-drag"
+              keyboardShouldPersistTaps="handled"
               contentContainerStyle={styles.subContainer}
-              style={{ transform: [{ translateY: animatedValue }] }}>
+              style={{transform: [{translateY: animatedValue}]}}>
               <LinearGradient colors={bottomColors} style={styles.gradient} />
+
               <View style={styles.content}>
                 <Image
                   source={require('@assets/appIcons/app_icon.jpg')}
                   style={styles.logo}
                 />
-                <CustomText variant="h2" fontFamily={Fonts.Bold} style={{ textAlign: 'center' }} >
+                <CustomText
+                  variant="h2"
+                  fontFamily={Fonts.Bold}
+                  style={styles.title}>
                   Your Everyday Grocery Partner
                 </CustomText>
+
                 <CustomText
                   variant="h5"
                   fontFamily={Fonts.SemiBold}
@@ -204,12 +375,8 @@ const CustomerLogin: FC = () => {
                 </CustomText>
 
                 <CustomInput
-                  onChangeText={text => {
-                    setPhoneNumber(text.slice(0, 10));
-                  }}
-                  onClear={() => {
-                    setPhoneNumber('');
-                  }}
+                  onChangeText={handlePhoneNumberChange}
+                  onClear={handleClearPhone}
                   value={phoneNumber}
                   left={
                     <CustomText
@@ -222,12 +389,16 @@ const CustomerLogin: FC = () => {
                   placeholder="Enter Mobile Number"
                   inputMode="numeric"
                   right={true}
+                  keyboardType="phone-pad"
+                  maxLength={10}
                 />
+
                 <CustomButton
-                  title={loading ? "Sending OTP" : "Continue"}
-                  disabled={phoneNumber?.length != 10 || loading}
-                  onPress={() => sendOtp()}
+                  title={'Continue'}
+                  disabled={phoneNumber?.length !== 10 || loading}
+                  onPress={handleLogin}
                   loading={loading}
+                  loadingText='Please wait...'
                 />
               </View>
             </Animated.ScrollView>
@@ -241,8 +412,13 @@ const CustomerLogin: FC = () => {
         </View>
       </View>
 
-      <OtpModal isVisible={modalVisible} onClose={() => setModalVisible(false)} onConfirm={verifyOTP} isVerified={isOtpVerified} onResend={() => sendOtp()} />
-
+      <OtpModal
+        isVisible={modalVisible}
+        onClose={handleModalClose}
+        onConfirm={handleOtpConfirm}
+        isVerified={isOtpVerified}
+        onResend={handleResendOtp}
+      />
     </GestureHandlerRootView>
   );
 };
@@ -269,6 +445,10 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 20,
+    marginVertical: 10,
+  },
+  title: {
+    textAlign: 'center',
     marginVertical: 10,
   },
   text: {
