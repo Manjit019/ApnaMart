@@ -1,32 +1,36 @@
-import {ActivityIndicator, Alert, ScrollView, StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {useAuthStore} from '@state/authStore';
+import { ActivityIndicator, Alert, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useAuthStore } from '@state/authStore';
 import {
   confirmOrder,
   getOrderById,
   sendLiveOrderUpdates,
 } from '@service/orderService';
-import {Colors, Fonts} from '@utils/Constants';
+import { Colors, Fonts } from '@utils/Constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import LiveHeader from '@features/map/LiveHeader';
 import CustomText from '@components/ui/CustomText';
 import DeliveryDetails from '@features/map/DeliveryDetails';
 import OrderSummary from '@features/map/OrderSummary';
-import {screenHeight} from '@utils/Scaling';
-import {useRoute} from '@react-navigation/native';
+import { screenHeight } from '@utils/Scaling';
+import { useRoute } from '@react-navigation/native';
 import Geolocation from '@react-native-community/geolocation';
-import {hocStyle} from '@styles/GlobalStyles';
+import { hocStyle } from '@styles/GlobalStyles';
 import CustomButton from '@components/ui/CustomButton';
+import LiveMap from '@features/map/LiveMap';
 
 const DeliveryMap = () => {
   const user = useAuthStore(state => state.user);
   const [orderData, setOrderData] = useState<any>(null);
   const [myLocation, setMyLocation] = useState<any>(null);
-  const [loading,setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const route = useRoute();
   const orderDetails = route?.params as Record<string, any>;
-  const {currentOrder, setCurrentOrder} = useAuthStore();
+  const { currentOrder, setCurrentOrder } = useAuthStore();
+
+  console.log("user delivery map ",user);
+  
 
   const fetchOrderDetails = async () => {
     const data = await getOrderById(orderDetails?._id as any);
@@ -39,23 +43,24 @@ const DeliveryMap = () => {
     fetchOrderDetails();
   }, []);
 
-  /*
-  useEffect 
-  */
+ 
   useEffect(() => {
     const watchId = Geolocation.watchPosition(
       async position => {
-        const {latitude, longitude} = position.coords;
-        setMyLocation({latitude, longitude});
+        const { latitude, longitude } = position.coords;
+        setMyLocation({ latitude, longitude });
       },
       err => {
         console.log('Error Fetching Geolocation : ', err);
       },
-      {enableHighAccuracy: true, distanceFilter: 200},
+      { enableHighAccuracy: true, distanceFilter: 200 },
     );
 
     return () => Geolocation.clearWatch(watchId);
   }, []);
+
+  console.log("current order : \n\n", currentOrder, "0rder data : \n\n", orderData);
+
 
   const acceptOrder = async () => {
     const data = await confirmOrder(orderData?._id, myLocation);
@@ -76,28 +81,28 @@ const DeliveryMap = () => {
     );
     if (data) {
       setCurrentOrder(data);
-      Alert.alert("Order Picked Up","Let's deliver it as soon as possible");
+      Alert.alert("Order Picked Up", "Let's deliver it as soon as possible");
     } else {
       Alert.alert('There was an error!');
     }
     fetchOrderDetails();
   };
 
-   const orderOutForDelivery = async () => {
-    const data = await sendLiveOrderUpdates(
-      orderData?._id,
-      myLocation,
-      'out for delivery',
-    );
+  // const orderOutForDelivery = async () => {
+  //   const data = await sendLiveOrderUpdates(
+  //     orderData?._id,
+  //     myLocation,
+  //     'out for delivery',
+  //   );
 
-    if (data) {
-      setCurrentOrder(null);
-      Alert.alert('Order is out for delivery!',"Let's Deliver it to the customer's doorstep!");
-    } else {
-      Alert.alert('There was an error!');
-    }
-    fetchOrderDetails();
-  };
+  //   if (data) {
+  //     setCurrentOrder(null);
+  //     Alert.alert('Order is out for delivery!', "Let's Deliver it to the customer's doorstep!");
+  //   } else {
+  //     Alert.alert('There was an error!');
+  //   }
+  //   fetchOrderDetails();
+  // };
 
   const orderDelivered = async () => {
     const data = await sendLiveOrderUpdates(
@@ -108,7 +113,7 @@ const DeliveryMap = () => {
 
     if (data) {
       setCurrentOrder(null);
-      Alert.alert('Congrats!,You made it😍',"Great job! Order Delivered Successfully");
+      Alert.alert('Congrats!,You made it😍', "Great job! Order Delivered Successfully");
     } else {
       Alert.alert('There was an error!');
     }
@@ -116,6 +121,7 @@ const DeliveryMap = () => {
   };
 
   let msg = 'Start this order';
+
   if (
     orderData?.deliveryPartner?._id == user?._id &&
     orderData?.status === 'confirmed'
@@ -126,11 +132,16 @@ const DeliveryMap = () => {
     orderData?.status === 'arriving'
   ) {
     msg = 'Complete your order';
-  } else if (
+  } 
+  // else if (orderData?.deliveryPartner?._id == user?._id &&
+  //   orderData?.status === 'out for delivery') {
+  //   msg = "Let's Deliver it"
+  // } 
+  else if (
     orderData?.deliveryPartner?._id == user?._id &&
     orderData?.status === 'delivered'
   ) {
-    msg = 'Your milestone';
+    msg = 'Your milestone 🎉';
   } else if (
     orderData?.deliveryPartner?._id == user?._id &&
     orderData?.status != 'available'
@@ -155,37 +166,36 @@ const DeliveryMap = () => {
     sendLiveUpdates();
   }, [myLocation]);
 
-  if(loading){
+  if (loading) {
     return (
-      <View style={[styles.container,{justifyContent : 'center',alignItems : 'center'}]}>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator color={Colors.text} size='small' />
       </View>
     )
   }
   return (
     <View style={styles.container}>
-       <StatusBar translucent={false} backgroundColor="#fff" barStyle='dark-content' />
+      <StatusBar translucent={false} backgroundColor={Colors.primary} barStyle='dark-content' />
       <LiveHeader type="Delivery" title="ApnaMart" secondaryTitle={msg} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}>
-        {/* <LiveMap 
+        <LiveMap
           deliveryLocation={currentOrder?.deliveryLocation}
           pickupLocation={currentOrder?.pickupLocation}
           deliveryPersonLocation={currentOrder?.deliveryPersonLocation}
-          hasAccepted={currentOrder?.status == 'confirmed'}
-          hasPickedUp={currentOrder?.status == 'arriving'}
-        /> */}
-        {/* <OrderProgress currentStep={step} /> */}
+          hasAccepted={currentOrder?.status === 'confirmed'}
+          hasPickedUp={currentOrder?.status === 'arriving'}
+        />
 
         <DeliveryDetails details={currentOrder?.customer} />
 
-        <OrderSummary order={currentOrder} />
+        <OrderSummary order={currentOrder} discount={currentOrder?.discount} />
 
         <View
           style={[
             styles.flexRow,
-            {borderColor: Colors.border, borderWidth: 1},
+            { borderColor: Colors.border, borderWidth: 1 },
           ]}>
           <View style={styles.iconContainer}>
             <Icon
@@ -194,7 +204,7 @@ const DeliveryMap = () => {
               size={RFValue(20)}
             />
           </View>
-          <View style={{width: '82%'}}>
+          <View style={{ width: '82%' }}>
             <CustomText variant="h7" fontFamily={Fonts.SemiBold}>
               Do You Like Our App ?
             </CustomText>
@@ -207,14 +217,14 @@ const DeliveryMap = () => {
         <CustomText
           variant="h8"
           fontFamily={Fonts.SemiBold}
-          style={{marginTop: 30, opacity: 0.5, textAlign: 'center'}}>
+          style={{ marginTop: 30, opacity: 0.5, textAlign: 'center' }}>
           Manjit x Coder's Space Grocery Delivery App
         </CustomText>
       </ScrollView>
 
       {orderData?.status != 'delivered' && orderData?.status != 'cancelled' && (
         <View style={[hocStyle.cartContainer, styles.btnContainer]}>
-          {orderData?.status == 'available' && (
+          {orderData?.status === 'available' && (
             <CustomButton
               title="Accept Order"
               disabled={false}
@@ -222,7 +232,7 @@ const DeliveryMap = () => {
               loading={false}
             />
           )}
-          {orderData?.status == 'confirmed' &&
+          {orderData?.status === 'confirmed' &&
             orderData?.deliveryPartner?._id === user?._id && (
               <CustomButton
                 title="Order Picked Up"
@@ -231,7 +241,9 @@ const DeliveryMap = () => {
                 loading={false}
               />
             )}
-          {orderData?.status == 'arriving' &&
+
+
+          {orderData?.status === 'arriving' &&
             orderData?.deliveryPartner?._id === user?._id && (
               <CustomButton
                 title="Delivered"
@@ -240,6 +252,17 @@ const DeliveryMap = () => {
                 loading={false}
               />
             )}
+
+          {/* {orderData?.status === 'out for delivery' &&
+            orderData?.deliveryPartner?._id === user?._id && (
+              <CustomButton
+                title="Delivered"
+                disabled={false}
+                onPress={orderDelivered}
+                loading={false}
+              />
+            )} */}
+
         </View>
       )}
     </View>

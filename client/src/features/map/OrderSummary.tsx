@@ -7,7 +7,7 @@ import CustomText from '@components/ui/CustomText';
 import BillDetails from '@features/order/BillDetails';
 import { useCouponStore } from '@state/couponStore';
 
-const OrderSummary: FC<{order: any}> = ({order}) => {
+const OrderSummary: FC<{order: any,discount:number}> = ({order,discount}) => {
   const totalPrice =
     order?.items?.reduce(
       (totalPrice: number, cartItems: any) =>
@@ -15,7 +15,6 @@ const OrderSummary: FC<{order: any}> = ({order}) => {
       0,
     ) || 0;
 
-    const {appliedCoupon} = useCouponStore() as any;
 
   return (
     <View style={styles.container}>
@@ -53,7 +52,7 @@ const OrderSummary: FC<{order: any}> = ({order}) => {
         )
       })}
 
-      <BillDetails totalItemPrice={totalPrice} discount={appliedCoupon?.discount} />
+      <BillDetails totalItemPrice={totalPrice} discount={discount} />
     </View>
   );
 };

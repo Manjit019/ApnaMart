@@ -38,7 +38,6 @@ const LiveMap: FC<LiveMapProps> = ({
     }
   }, [  mapRef,
     deliveryLocation,
-    pickupLocation,
     hasPickedUp,
     hasAccepted,
     deliveryPersonLocation]);
@@ -53,6 +52,7 @@ const LiveMap: FC<LiveMapProps> = ({
         pickupLocation={pickupLocation}
         deliveryPersonLocation={deliveryPersonLocation}
         hasPickedUp={hasPickedUp}
+        
       />
 
       <TouchableOpacity

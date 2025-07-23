@@ -8,6 +8,7 @@ import {
   Alert,
   StatusBar,
   ToastAndroid,
+  PermissionsAndroid,
 } from 'react-native';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import {
@@ -29,6 +30,10 @@ import { customerLogin } from '@service/authService';
 import { useAuthStore } from '@state/authStore';
 import OtpModal from '@components/login/OtpModal';
 import auth from '@react-native-firebase/auth';
+import GeoLocation from '@react-native-community/geolocation'
+import { requestLocationPermission } from '@utils/permissions';
+import Geolocation from '@react-native-community/geolocation';
+
 
 const bottomColors = [...lightColors].reverse();
 
@@ -42,7 +47,7 @@ const CustomerLogin: FC = () => {
   const [gestureSequence, setGestureSequence] = useState<string[]>([]);
   const keyboardOffsetHeight = useKeyboardOffsetHeight();
 
-  const { user, setUser } = useAuthStore();
+  const { user, setUser} = useAuthStore();
 
   const animatedValue = useRef(new Animated.Value(0)).current;
 
@@ -63,7 +68,6 @@ const CustomerLogin: FC = () => {
   }, [keyboardOffsetHeight]);
 
   const sendOtp = async () => {
-
     Keyboard.dismiss();
     setLoading(true);
 
@@ -94,12 +98,24 @@ const CustomerLogin: FC = () => {
     if (code.length != 6) return;
 
     try {
-      const verificationData = await confirm.confirm(code);
+      await confirm.confirm(code);
 
       setIsOtpVerified(true);
 
-      const data = await customerLogin(phoneNumber, isOtpVerified);
-      setUser(data.customer);
+      handleLogin();
+
+    } catch (error: any) {
+      console.log("OTP Verification Failed :", error);
+      Alert.alert('Login Failed!', "Something went wrong ,Please try again!");
+      setModalVisible(false);
+      setIsOtpVerified(false);
+    }
+
+  }
+
+  const handleLogin = async () => {
+     const data = await customerLogin(phoneNumber, isOtpVerified, user?.location);
+     setUser(data.customer);
 
       if (data.customer.name === "User" || !data.customer.address) {
         navigate("CompleteProfile");
@@ -107,13 +123,6 @@ const CustomerLogin: FC = () => {
         return;
       }
       resetAndNavigate('ProductDashboard');
-
-    } catch (error: any) {
-      console.log("OTP Verification Failed :", error);
-      Alert.alert('Login Failed!',"Something went wrong ,Please try again!" );
-      setModalVisible(false);
-      setIsOtpVerified(false);
-    }
 
   }
 
@@ -137,6 +146,29 @@ const CustomerLogin: FC = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchLocation = async () => {
+      const hasPermission = await PermissionsAndroid.check('android.permission.ACCESS_FINE_LOCATION');
+      if (!hasPermission) return;
+
+      Geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude, accuracy } = position.coords;
+         setUser((prev:any)=> ({ ...prev, location: { latitude, longitude ,accuracy } }));
+
+      }, (err) => {
+        console.error("Error while getting user location", err);
+      }, {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 10000,
+      })
+    };
+
+    fetchLocation();
+
+  }, [])
+
 
   return (
     <GestureHandlerRootView style={styles.container}>

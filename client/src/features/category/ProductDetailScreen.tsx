@@ -22,7 +22,7 @@ interface Product {
     discountPrice: number;
     quantity: string;
     description: string;
-    image ?:string;
+    image?: string;
     images: string[];
     category: { name: string };
     brand?: string;
@@ -54,7 +54,9 @@ const ProductDetailScreen: FC = () => {
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [showFullDescription, setShowFullDescription] = useState(false);
-  
+
+    console.log(product);
+
 
     const ref = useRef<ICarouselInstance>(null);
     const progress = useSharedValue<number>(0);
@@ -108,7 +110,7 @@ const ProductDetailScreen: FC = () => {
         return 0;
     };
 
-   
+
     useEffect(() => {
         fetchProduct();
     }, [id]);
@@ -149,43 +151,50 @@ const ProductDetailScreen: FC = () => {
             />
 
             <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                <View style={styles.carouselContainer}>
-                    <Carousel
-                        {...baseOptions}
-                        ref={ref}
-                        loop={product.images.length >= 2}
-                        pagingEnabled
-                        snapEnabled
-                        mode="parallax"
-                        data={product.images || product.image ||[]}
-                        modeConfig={{ parallaxScrollingOffset: 0, parallaxScrollingScale: 1 }}
-                        renderItem={({ item }: { item: string }) => (
-                            <ScalePress style={styles.imageContainer}>
-                                <Image source={{ uri: item }} style={styles.image} />
-                            </ScalePress>
-                        )}
-                    />
 
-                    {product.images && product.images.length > 1 && (
-                        <Pagination.Basic
+                {product.images.length > 1 ? (
+                    <View style={styles.carouselContainer}>
+                        <Carousel
+                            {...baseOptions}
+                            ref={ref}
+                            loop={product.images.length >= 2}
+                            pagingEnabled
+                            snapEnabled
+                            mode="parallax"
                             data={product.images}
-                            progress={progress}
-                            dotStyle={styles.paginationDot}
-                            activeDotStyle={styles.activePaginationDot}
-                            containerStyle={styles.paginationContainer}
-                            onPress={onPressPagination}
-                            horizontal
+                            modeConfig={{ parallaxScrollingOffset: 0, parallaxScrollingScale: 1 }}
+                            renderItem={({ item }: { item: string }) => (
+                                <ScalePress style={styles.imageContainer}>
+                                    <Image source={{ uri: item }} style={styles.image} />
+                                </ScalePress>
+                            )}
                         />
-                    )}
+
+                        {product.images && product.images.length > 1 && (
+                            <Pagination.Basic
+                                data={product.images}
+                                progress={progress}
+                                dotStyle={styles.paginationDot}
+                                activeDotStyle={styles.activePaginationDot}
+                                containerStyle={styles.paginationContainer}
+                                onPress={onPressPagination}
+                                horizontal
+                            />
+                        )}
 
 
 
-                    <View style={[styles.stockBadge, { backgroundColor: product.inStock ? 'green' : 'red' }]}>
-                        <CustomText fontFamily={Fonts.SemiBold} style={styles.stockText}>
-                            {product.inStock ? 'In Stock' : 'Out of Stock'}
-                        </CustomText>
+                        <View style={[styles.stockBadge, { backgroundColor: product.inStock ? 'green' : 'red' }]}>
+                            <CustomText fontFamily={Fonts.SemiBold} style={styles.stockText}>
+                                {product.inStock ? 'In Stock' : 'Out of Stock'}
+                            </CustomText>
+                        </View>
                     </View>
-                </View>
+                ) : (
+                    <View style={styles.imageContainer}>
+                        <Image source={{ uri: product.image }} style={styles.image} />
+                    </View>
+                )}
 
 
                 <View style={styles.productInfo}>
@@ -507,7 +516,7 @@ const styles = StyleSheet.create({
         marginTop: 8,
         fontWeight: '500',
     },
- 
+
     bottomActions: {
         backgroundColor: '#fff',
         borderTopWidth: 1,

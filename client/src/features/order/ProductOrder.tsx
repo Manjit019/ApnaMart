@@ -23,11 +23,12 @@ import { useAuthStore } from '@state/authStore';
 import { hocStyle } from '@styles/GlobalStyles';
 import ArrowButton from '@components/ui/ArrowButton';
 import { createOrder } from '@service/orderService';
-import { navigate } from '@utils/NavigationUtils';
+import { navigate, resetAndNavigate } from '@utils/NavigationUtils';
 import CouponSheet from './CouponSheet';
 import { EXTRACHARGES } from '@service/config';
 import { useCouponStore } from '@state/couponStore';
 import { applyCoupon } from '@service/couponService';
+import { createRazorpayOrder, createTransaction } from '@service/paymentService';
 
 const ProductOrder = () => {
   const { getTotalPrice, cart, clearCart } = useCartStore();
@@ -56,20 +57,38 @@ const ProductOrder = () => {
       Alert.alert('Add any items to place order');
       return;
     }
-    const payableAmount = couponResult?.success ? couponResult?.finalTotal : totalItemPrice + EXTRACHARGES
+    const finalTotal = couponResult?.success ? couponResult?.finalTotal : totalItemPrice + EXTRACHARGES
 
     setLoading(true);
+
+    // const tdata = await createTransaction(payableAmount,user?._id);
+    // if(tdata){
+    //   const order =await createRazorpayOrder(tdata?.key,tdata?.amount,tdata?.order_id,currentOrder,user?._id,user?.address);
+    //   setLoading(false);
+    //   if(order?.type === 'error'){
+    //     Alert.alert("Payment Failed!");
+    //   }
+
+
+    // } else{
+    //     setLoading(false);
+    //     Alert.alert("There was an Error!")
+    // }
+
     const data = await createOrder(
       formattedData,
-      payableAmount,
+      totalItemPrice + EXTRACHARGES,
       couponResult?.couponId,
+      user?.location ,
+      couponResult?.discount,
+      finalTotal
     );
 
     if (data != null) {
       setCurrentOrder(data);
       clearCart();
       clearCoupon();
-      navigate('OrderSuccess', { ...data });
+      resetAndNavigate('OrderSuccess', { ...data });
     }
 
     setLoading(false);

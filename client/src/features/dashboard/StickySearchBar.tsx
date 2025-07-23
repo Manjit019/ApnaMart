@@ -28,10 +28,6 @@ const StickySearchBar: FC = () => {
     };
   });
 
-  // const paddingTop = useAnimatedValue(0);j
-
-  // const handleTopPadding = 
-
   return (
     <StickyView  style={[backgroundColorChanges]}>
         <SearchBar />

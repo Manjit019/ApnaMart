@@ -10,7 +10,7 @@ const steps = [
   { title: 'Order Placed', icon: 'circle' },
   { title: 'Order Confirmed', icon: 'checkbox-marked-circle' },
   { title: 'Picked Up', icon: 'store-check' },
-  { title: 'Out for Delivery', icon: 'motorbike' },
+  // { title: 'Out for Delivery', icon: 'motorbike' },
   { title: 'Delivered', icon: 'package-variant' },
 ];
 
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     width: '100%',
     height: screenHeight * 0.15,
+    marginVertical : 6
   },
   progressContainer: {
     height: 100,

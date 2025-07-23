@@ -8,97 +8,184 @@ import {
   ActivityIndicator,
   StatusBar,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import {Colors} from '@utils/Constants';
-import {useAuthStore} from '@state/authStore';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Colors } from '@utils/Constants';
+import { useAuthStore } from '@state/authStore';
 import DeliveryHeader from '@components/delivery/DeliveryHeader';
 import TabBar from '@components/delivery/TabBar';
 import Geolocation from '@react-native-community/geolocation';
-import {fetchOrders} from '@service/orderService';
+import { fetchOrders } from '@service/orderService';
 import DeliveryOrderItem from '@components/delivery/DeliveryOrderItem';
 import CustomText from '@components/ui/CustomText';
 import withLiveOrder from './withLiveOrder';
+import { reverseGeocode } from '@utils/mapUtils';
+
+type TabType = 'cancelled' | 'available' | 'arriving' | 'confirmed' | 'delivered';
+
 
 const DeliveryDashboard = () => {
-  const {user, setUser} = useAuthStore();
-  const [selectedTab, setSelectedTab] = useState<
-    'cancelled' | 'available'|'arriving' | 'confirmed' | 'delivered'
-  >('available');
-
+  const { user } = useAuthStore();
+  
+  const [userData, setUserData] = useState<any>(null);
+  const [selectedTab, setSelectedTab] = useState<TabType>('available');
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
 
-  const fetchData = async () => {
-    setData([]);
-    setRefreshing(true);
-    setLoading(true);
-    const data = await fetchOrders(selectedTab, user?._id, user?.branch);
-    setData(data);
-    setRefreshing(false);
-    setLoading(false);
-  };
+  if (!user) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator color={Colors.secondary} size="large" />
+      </View>
+    );
+  }
+
+  const fetchData = useCallback(async () => {
+    if (!userData?._id) return;
+    
+    try {
+      setRefreshing(true);
+      setLoading(true);
+      const orderData = await fetchOrders(selectedTab, userData._id, userData.branch);
+      setData(orderData || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setData([]);
+    } finally {
+      setRefreshing(false);
+      setLoading(false);
+    }
+  }, [selectedTab, userData?._id, userData?.branch]);
+
+  const updateUserLocation = useCallback(() => {
+    if (locationLoading) return; 
+    
+    setLocationLoading(true);
+    
+    Geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          const address = await reverseGeocode(latitude, longitude);
+          setUserData((prev:any) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              address,
+              liveLocation: { latitude, longitude }
+            };
+          });
+        } catch (error) {
+          console.error('Error getting address:', error);
+          setUserData((prev:any) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              liveLocation: { latitude, longitude }
+            };
+          });
+        } finally {
+          setLocationLoading(false);
+        }
+      },
+      (error) => {
+        console.error('Geolocation error:', error);
+        setLocationLoading(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 25000, 
+      }
+    );
+  }, [locationLoading]);
+
+ 
+  useEffect(() => {
+    if (user) {
+      setUserData(user);
+      updateUserLocation();
+    }
+  }, [user, updateUserLocation]);
 
   useEffect(() => {
-    fetchData();
-  }, [selectedTab]);
+    if (userData?._id) {
+      fetchData();
+    }
+  }, [fetchData, userData?._id]);
 
-  const renderOrderItem = ({item, index}: any) => {
+  const renderOrderItem = useCallback(({ item, index }: any) => {
     return <DeliveryOrderItem index={index} item={item} />;
-  };
+  }, []);
 
-  // const updateUser = ()=>{
-  //   Geolocation.getCurrentPosition(
-  //     position => {
-  //       const {latitude,longitude} = position.coords;
-  //       reverseGeocode(latitude,longitude,setUser)
-  //     },
-  //     err => console.log(err),
-  //     {
-  //       enableHighAccuracy : false,
-  //       timeout : 15000
-  //     }
-  //   )
-  // }
+  const handleRefresh = useCallback(async () => {
+    await fetchData();
+  }, [fetchData]);
 
-  // useEffect(()=>{
-  // updateUser()
-  // },[])
+  const handleTabChange = useCallback((tab: TabType) => {
+    setSelectedTab(tab);
+  }, []);
+
+  const renderEmptyComponent = useCallback(() => {
+    if (loading) {
+      return (
+        <View style={styles.center}>
+          <ActivityIndicator color={Colors.secondary} size="small" />
+        </View>
+      );
+    }
+    return (
+      <View style={styles.center}>
+        <CustomText>No Orders Found Yet!</CustomText>
+      </View>
+    );
+  }, [loading]);
+
+  const keyExtractor = useCallback((item: any) => item.orderId, []);
 
   return (
     <View style={styles.container}>
-       <StatusBar translucent={false} backgroundColor={Colors.secondary} barStyle='dark-content' />
+      <StatusBar 
+        translucent={false} 
+        backgroundColor={Colors.primary} 
+        barStyle="light-content" 
+      />
+      
       <SafeAreaView>
-        <DeliveryHeader name={user?.name} email={user?.email} />
+        <DeliveryHeader 
+          name={userData?.name || 'Partner'} 
+          email={userData?.email || ''} 
+        />
       </SafeAreaView>
+      
       <View style={styles.subContainer}>
-        <TabBar selectedTab={selectedTab} onTabChange={setSelectedTab} />
+        <TabBar 
+          selectedTab={selectedTab} 
+          onTabChange={handleTabChange} 
+        />
 
         <FlatList
           data={data}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
-              onRefresh={async () => await fetchData()}
+              onRefresh={handleRefresh}
+              colors={[Colors.primary]}
+              tintColor={Colors.primary}
             />
           }
-          ListEmptyComponent={() => {
-            if (loading) {
-              return (
-                <View style={styles.center}>
-                  <ActivityIndicator color={Colors.secondary} size="small" />
-                </View>
-              );
-            }
-            return (
-              <View style={styles.center}>
-                <CustomText>No Orders Found Yet!</CustomText>
-              </View>
-            );
-          }}
+          ListEmptyComponent={renderEmptyComponent}
           renderItem={renderOrderItem}
-          keyExtractor={item => item.orderId}
-          contentContainerStyle={styles.flatListContainer}
+          keyExtractor={keyExtractor}
+          contentContainerStyle={[
+            styles.flatListContainer,
+            data.length === 0 && styles.emptyListContainer
+          ]}
+          showsVerticalScrollIndicator={false}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={10}
+          windowSize={10}
         />
       </View>
     </View>
@@ -119,7 +206,10 @@ const styles = StyleSheet.create({
   },
   flatListContainer: {
     padding: 2,
-    paddingBottom : 100
+    paddingBottom: 100,
+  },
+  emptyListContainer: {
+    flex: 1,
   },
   center: {
     flex: 1,

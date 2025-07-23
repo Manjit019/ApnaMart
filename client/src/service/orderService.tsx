@@ -1,17 +1,20 @@
-import {appAxios} from './apiInterceptors';
-import {BRANCH_ID} from './config';
+import { appAxios } from './apiInterceptors';
+import { BRANCH_ID } from './config';
 
-export const createOrder = async (item: any, totalPrice: number,coupon:any) => {
-  
+export const createOrder = async (item: any, totalPrice: number, coupon?: any, deliveryLocation?: any, discount?: number, finalTotal?: number) => {
+
   try {
     const res = await appAxios.post('/order', {
       items: item,
-      branch: BRANCH_ID ,
+      branch: BRANCH_ID,
       totalPrice: totalPrice,
-      coupon 
+      coupon,
+      deliveryLocation,
+      discount,
+      finalTotal
     });
     console.log(res);
-    
+
     return res.data;
   } catch (error) {
     console.log('Error creating order : ', error);

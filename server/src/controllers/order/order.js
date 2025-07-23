@@ -1,9 +1,9 @@
-import { Branch, Customer, DeliveryPartner, Order } from "../../models/index.js";
+import { Branch, Coupon, Customer, DeliveryPartner, Order } from "../../models/index.js";
 
 export const createOrder = async (req, reply) => {
     try {
         const { userId } = req.user;
-        const { items, branch, totalPrice } = req.body;
+        const { items, branch, totalPrice,coupon , discount,finalTotal ,deliveryLocation,pickupLocation} = req.body;
 
         const customerData = await Customer.findById(userId);
         const branchData = await Branch.findById(branch);
@@ -21,17 +21,20 @@ export const createOrder = async (req, reply) => {
             })),
             branch,
             totalPrice,
-            deliveryLocation: {
+            deliveryLocation: deliveryLocation || {
                 latitude: customerData.liveLocation.latitude,
                 longitude: customerData.liveLocation.longitude,
                 address: customerData.address || "No Address Available"
             },
-            pickupLocation: {
+            pickupLocation: pickupLocation || {
                 latitude: branchData.location.latitude,
                 longitude: branchData.location.longitude,
                 address: branchData.address || "No Address Available"
             },
-
+            coupon,
+            discount,
+            finalTotal,
+            
         });
 
       
@@ -156,7 +159,7 @@ export const getOrders = async (req, reply) => {
         return reply.status(200).send(orders);
 
     } catch (error) {
-        return reply.status(500).send({ message: "Failed to retrieve orderssss", error });
+        return reply.status(500).send({ message: "Failed to retrieve orders", error });
     }
 }
 
