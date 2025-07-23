@@ -1,11 +1,12 @@
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import MapView, {Polyline} from 'react-native-maps';
-import {customMapStyle} from '@utils/CustomMap';
+import MapView, { Polyline } from 'react-native-maps';
+import { customMapStyle, indiaIntialRegion } from '@utils/CustomMap';
 import Markers from './Markers';
-import {getPoints} from '@utils/getPoints';
+import { getPoints } from '@utils/getPoints';
 import { Colors } from '@utils/Constants';
 import { GOOGLE_MAP_API } from '@service/config';
+import MapViewDirections from 'react-native-maps-directions';
 
 const MapViewComponent = ({
   mapRef,
@@ -17,10 +18,12 @@ const MapViewComponent = ({
   deliveryPersonLocation,
   hasPickedUp,
 }: any) => {
+
+
   return (
     <MapView
       ref={setMapRef}
-      style={{flex: 1}}
+      style={{ flex: 1 }}
       provider="google"
       camera={camera}
       customMapStyle={customMapStyle}
@@ -36,34 +39,35 @@ const MapViewComponent = ({
       showsScale={false}
       showsIndoorLevelPicker={false}>
 
-      {/* { deliveryPersonLocation && (hasPickedUp || hasAccepted) && (
-        //npm i react-native-maps-directions
-        <MapViewDirections 
-        origin={deliveryPersonLocation} 
-        destination={hasAccepted ? pickupLocation : deliveryLocation}
-        precision : "high",
-        apiKey={GOOGLE_MAP_API}
-        strokeColor="#2371f2"
-        strokeWidth : {2}
-        onError = {err => console.log(err)
-        }
-        />
-      )} */}
+      {deliveryPersonLocation && (hasPickedUp || hasAccepted) && (
+          <MapViewDirections
+            origin={deliveryPersonLocation}
+            destination={hasAccepted ? pickupLocation : deliveryLocation}
+            precision='high'
+            apikey={GOOGLE_MAP_API}
+            strokeColor="#6319c4ff"
+            strokeWidth={2}
+            onError={err => console.log(err)
+            }
+          />
+      )}
 
       <Markers
         deliveryPersonLocation={deliveryPersonLocation}
         deliveryLocation={deliveryLocation}
         pickupLocation={pickupLocation}
       />
+
       {!hasPickedUp && deliveryLocation && pickupLocation && (
         <Polyline
           coordinates={getPoints([pickupLocation, deliveryLocation])}
-          strokeColor={Colors.text}
-          strokeWidth={2}
-          geodesic = {true}
-          lineDashPattern={[12,10]}
+          strokeColor={Colors.secondary}
+          strokeWidth={5}
+          geodesic={true}
+          lineDashPattern={[12, 10]}
         />
       )}
+
     </MapView>
   );
 };

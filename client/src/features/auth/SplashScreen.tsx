@@ -1,4 +1,4 @@
-import {View, StyleSheet, Image, Alert, StatusBar} from 'react-native';
+import {View, StyleSheet, Image, Alert, StatusBar, PermissionsAndroid} from 'react-native';
 import React, {FC, useEffect} from 'react';
 import {Colors, Fonts} from '@utils/Constants';
 import {screenHeight, screenWidth} from '@utils/Scaling';
@@ -29,8 +29,6 @@ const SplashScreen: FC = () => {
   const tokenCheck = async () => {
     const accessToken = tokenStorage.getString('accessToken') as string;
     const refreshToken = tokenStorage.getString('refreshToken') as string;
-
-    // tokenStorage.clearAll();
 
     if (accessToken) {
       const decodedAccessToken = jwtDecode<DecodedToken>(accessToken);
@@ -67,6 +65,7 @@ const SplashScreen: FC = () => {
   };
 
   useEffect(() => {
+
     const fetchUserLocation = async () => {
       try {
         GeoLocation.requestAuthorization();

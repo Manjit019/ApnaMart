@@ -23,7 +23,7 @@ const CouponResult: FC = () => {
             You have got discount of ₹{result.discount.toFixed(2)}
           </CustomText>
           <CustomText fontFamily={Fonts.Medium} style={styles.success}>
-            Final Amount : ₹{result.finalTotal.toFixed(2) + EXTRACHARGES}
+            Final Amount : ₹{(result.finalTotal + EXTRACHARGES).toFixed(2)}
           </CustomText>
         </>
       ) : (

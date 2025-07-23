@@ -6,15 +6,17 @@ import { resetAndNavigate } from '@utils/NavigationUtils';
 import { appAxios } from './apiInterceptors';
 
 
-export const customerLogin = async (phone: string,isPhoneVerified : boolean) => {
+export const customerLogin = async (phone: string,isPhoneVerified : boolean,liveLocation ?: any) => {
   try {
-    const response = await axios.post(`${BASE_URL}/customer/login`, { phone , isPhoneVerified });
+    const response = await axios.post(`${BASE_URL}/customer/login`, { phone , isPhoneVerified ,liveLocation });
     
-    const {accessToken, refreshToken, customer} = response.data;
-    
-    tokenStorage.set('accessToken', accessToken);
-    tokenStorage.set('refreshToken', refreshToken);
+    const {accessToken, refreshToken} = response.data;
 
+    if(accessToken && refreshToken){
+      tokenStorage.set('accessToken', accessToken);
+      tokenStorage.set('refreshToken', refreshToken);
+    }
+    
     return response.data;
 
   } catch (err) {

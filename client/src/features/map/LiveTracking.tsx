@@ -39,17 +39,17 @@ const LiveTracking = () => {
     msg = 'Order Picked Up';
     time = 'Arriving in 6 minutes...';
     step = 2;
-  } else if (currentOrder?.status === 'out for delivery') {
-    msg = 'Out for delivery';
-    time = 'Arriving in 2 minutes...';
-    step = 3;
-    setCurrentOrder(null);
-  }
+  } 
+  // else if (currentOrder?.status === 'out for delivery') {
+  //   msg = 'Out for delivery';
+  //   time = 'Arriving in 2 minutes...';
+  //   step = 3;
+  // }
 
   else if (currentOrder?.status === 'delivered') {
     msg = 'Order Delivered';
     time = 'Fasted Delivery.';
-    step = 4;
+    step = 3;
   }
 
   return (
@@ -63,13 +63,16 @@ const LiveTracking = () => {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContainer}>
-        {/* <LiveMap 
-          deliveryLocation={currentOrder?.deliveryLocation}
-          pickupLocation={currentOrder?.pickupLocation}
-          deliveryPersonLocation={currentOrder?.deliveryPersonLocation}
-          hasAccepted={currentOrder?.status == 'confirmed'}
-          hasPickedUp={currentOrder?.status == 'arriving'}
-        /> */}
+
+        {currentOrder?.deliveryLocation?.latitude && currentOrder?.pickupLocation && (
+          <LiveMap
+            deliveryLocation={currentOrder?.deliveryLocation}
+            pickupLocation={currentOrder?.pickupLocation}
+            deliveryPersonLocation={currentOrder?.deliveryPersonLocation}
+            hasAccepted={currentOrder?.status === 'confirmed'}
+            hasPickedUp={currentOrder?.status === 'arriving'}
+          />
+        )}
 
         <OrderProgress currentStep={step} />
 
@@ -111,7 +114,7 @@ const LiveTracking = () => {
 
         <DeliveryDetails details={currentOrder?.customer} />
 
-        <OrderSummary order={currentOrder} />
+        <OrderSummary order={currentOrder} discount={currentOrder?.discount || 0} />
 
         <View
           style={[

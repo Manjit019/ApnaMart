@@ -35,7 +35,7 @@ function getStatusColor(status: string) {
   }
 }
 
-const ProfileOrderItem: FC<{item: Order; index: number}> = ({index, item}) => {
+const ProfileOrderItem: FC<{item: any; index: number}> = ({index, item}) => {
   return (
     <View style={[styles.container, {borderTopWidth: index === 0 ? 0.7 : 0}]}>
       <View style={[styles.flexRowBetween, {marginBottom: 8}]}>
@@ -54,7 +54,7 @@ const ProfileOrderItem: FC<{item: Order; index: number}> = ({index, item}) => {
 
       <View style={styles.flexRowBetween}>
         <View style={{width: '50%'}}>
-          {item?.items?.map((i, idx) => {
+          {item?.items?.map((i : any, idx : number) => {
             return (
               <CustomText key={idx} variant="h9" numberOfLines={1}>
                 {i?.itemCount} x {i?.item?.name}
@@ -62,12 +62,12 @@ const ProfileOrderItem: FC<{item: Order; index: number}> = ({index, item}) => {
             );
           })}
         </View>
-        <View style={{alignItems: 'flex-end'}}>
+        <View style={{alignItems: 'flex-end',alignSelf : 'flex-end'}}>
           <CustomText
             variant="h5"
             fontFamily={Fonts.SemiBold}
             style={{marginTop: 10}}>
-            ₹{item?.totalPrice}
+            ₹{item?.finalTotal || item?.totalPrice}
           </CustomText>
           <CustomText variant="h8">
             {formatISOToCustom(item.createdAt)}
