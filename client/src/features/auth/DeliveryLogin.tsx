@@ -20,7 +20,7 @@ const DeliveryLogin: FC = () => {
   const [loading, setLoading] = useState(false);
   const [isEyeOpen, setIsEyeOpen] = useState(true);
 
-  const { user, setUser } = useAuthStore();
+  const { setUser } = useAuthStore();
 
   const handleLogin = async () => {
     setLoading(true);

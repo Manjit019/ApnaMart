@@ -24,9 +24,8 @@ type TabType = 'cancelled' | 'available' | 'arriving' | 'confirmed' | 'delivered
 
 
 const DeliveryDashboard = () => {
-  const { user } = useAuthStore();
-  
-  const [userData, setUserData] = useState<any>(null);
+  const { user, setUser } = useAuthStore();
+
   const [selectedTab, setSelectedTab] = useState<TabType>('available');
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any[]>([]);
@@ -42,12 +41,12 @@ const DeliveryDashboard = () => {
   }
 
   const fetchData = useCallback(async () => {
-    if (!userData?._id) return;
-    
+    if (!user?._id) return;
+
     try {
       setRefreshing(true);
       setLoading(true);
-      const orderData = await fetchOrders(selectedTab, userData._id, userData.branch);
+      const orderData = await fetchOrders(selectedTab, user._id, user.branch);
       setData(orderData || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -56,35 +55,31 @@ const DeliveryDashboard = () => {
       setRefreshing(false);
       setLoading(false);
     }
-  }, [selectedTab, userData?._id, userData?.branch]);
+  }, [selectedTab, user?._id, user?.branch]);
 
   const updateUserLocation = useCallback(() => {
-    if (locationLoading) return; 
-    
+    if (locationLoading) return;
+
     setLocationLoading(true);
-    
+
     Geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
         try {
           const address = await reverseGeocode(latitude, longitude);
-          setUserData((prev:any) => {
-            if (!prev) return prev;
-            return {
-              ...prev,
-              address,
-              liveLocation: { latitude, longitude }
-            };
-          });
+       
+          useAuthStore.getState().setUser((prev: any) => ({
+            ...prev,
+             address,
+            liveLocation: { latitude, longitude },
+          }));
+
         } catch (error) {
           console.error('Error getting address:', error);
-          setUserData((prev:any) => {
-            if (!prev) return prev;
-            return {
-              ...prev,
-              liveLocation: { latitude, longitude }
-            };
-          });
+         useAuthStore.getState().setUser((prev:any)=>({
+           ...prev,
+           liveLocation: { latitude, longitude },
+         }))
         } finally {
           setLocationLoading(false);
         }
@@ -96,24 +91,23 @@ const DeliveryDashboard = () => {
       {
         enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 25000, 
+        maximumAge: 25000,
       }
     );
   }, [locationLoading]);
 
- 
+
   useEffect(() => {
     if (user) {
-      setUserData(user);
       updateUserLocation();
     }
   }, [user, updateUserLocation]);
 
   useEffect(() => {
-    if (userData?._id) {
+    if (user?._id) {
       fetchData();
     }
-  }, [fetchData, userData?._id]);
+  }, [fetchData, user?._id]);
 
   const renderOrderItem = useCallback(({ item, index }: any) => {
     return <DeliveryOrderItem index={index} item={item} />;
@@ -146,23 +140,23 @@ const DeliveryDashboard = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar 
-        translucent={false} 
-        backgroundColor={Colors.primary} 
-        barStyle="light-content" 
+      <StatusBar
+        translucent={false}
+        backgroundColor={Colors.primary}
+        barStyle="light-content"
       />
-      
+
       <SafeAreaView>
-        <DeliveryHeader 
-          name={userData?.name || 'Partner'} 
-          email={userData?.email || ''} 
+        <DeliveryHeader
+          name={user?.name || 'Partner'}
+          email={user?.email || ''}
         />
       </SafeAreaView>
-      
+
       <View style={styles.subContainer}>
-        <TabBar 
-          selectedTab={selectedTab} 
-          onTabChange={handleTabChange} 
+        <TabBar
+          selectedTab={selectedTab}
+          onTabChange={handleTabChange}
         />
 
         <FlatList

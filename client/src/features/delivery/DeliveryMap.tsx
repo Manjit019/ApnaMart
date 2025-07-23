@@ -29,9 +29,6 @@ const DeliveryMap = () => {
   const orderDetails = route?.params as Record<string, any>;
   const { currentOrder, setCurrentOrder } = useAuthStore();
 
-  console.log("user delivery map ",user);
-  
-
   const fetchOrderDetails = async () => {
     const data = await getOrderById(orderDetails?._id as any);
     setCurrentOrder(data);
@@ -58,9 +55,6 @@ const DeliveryMap = () => {
 
     return () => Geolocation.clearWatch(watchId);
   }, []);
-
-  console.log("current order : \n\n", currentOrder, "0rder data : \n\n", orderData);
-
 
   const acceptOrder = async () => {
     const data = await confirmOrder(orderData?._id, myLocation);

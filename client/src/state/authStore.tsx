@@ -16,7 +16,10 @@ export const useAuthStore = create<authStore>()(
             user: null,
             currentOrder: null,
             setCurrentOrder: (order) => set({ currentOrder: order }),
-            setUser: (data) => set({ user: data }),
+            setUser: (data) =>
+                set((state) => ({
+                    user: typeof data === 'function' ? data(state.user) : data,
+                })),
             logout: () => set({ user: null, currentOrder: null }),
         }),
         {
