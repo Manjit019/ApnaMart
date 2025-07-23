@@ -21,7 +21,7 @@ const CustomHeader: FC<{title: string; search?: boolean,rightComponent?:ReactNod
           <Icon name="chevron-back" color={Colors.text} size={RFValue(18)} />
         </Pressable>
         <CustomText
-          style={styles.text}
+          style={[styles.text,rightComponent ||search ? {width : 'auto'} : {width : '95%'}]}
           variant="h5"
           fontFamily={Fonts.SemiBold}>
           {title}

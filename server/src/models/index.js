@@ -4,7 +4,7 @@ import Category from "./category.js";
 import Product from "./products.js";
 import Order from './order.js'
 import Counter from "./counter.js";
-
+import Coupon from './coupon.js'
 
 export {
     Branch,
@@ -14,5 +14,6 @@ export {
     Category,
     Product,
     Order,
-    Counter
+    Counter,
+    Coupon
 };

@@ -21,7 +21,7 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       cart: [],
-      addItem: item => {
+      addItem: item => { 
         const currentCart = get().cart;
         
         const existingItemIndex = currentCart?.findIndex(
@@ -85,3 +85,4 @@ export const useCartStore = create<CartStore>()(
     },
   ),
 );
+

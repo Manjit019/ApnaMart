@@ -83,6 +83,22 @@ const DeliveryMap = () => {
     fetchOrderDetails();
   };
 
+   const orderOutForDelivery = async () => {
+    const data = await sendLiveOrderUpdates(
+      orderData?._id,
+      myLocation,
+      'out for delivery',
+    );
+
+    if (data) {
+      setCurrentOrder(null);
+      Alert.alert('Order is out for delivery!',"Let's Deliver it to the customer's doorstep!");
+    } else {
+      Alert.alert('There was an error!');
+    }
+    fetchOrderDetails();
+  };
+
   const orderDelivered = async () => {
     const data = await sendLiveOrderUpdates(
       orderData?._id,

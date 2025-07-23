@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {RFValue} from 'react-native-responsive-fontsize';
 import CustomText from '@components/ui/CustomText';
 import BillDetails from '@features/order/BillDetails';
+import { useCouponStore } from '@state/couponStore';
 
 const OrderSummary: FC<{order: any}> = ({order}) => {
   const totalPrice =
@@ -13,6 +14,8 @@ const OrderSummary: FC<{order: any}> = ({order}) => {
         totalPrice + cartItems.item.price * cartItems.itemCount,
       0,
     ) || 0;
+
+    const {appliedCoupon} = useCouponStore() as any;
 
   return (
     <View style={styles.container}>
@@ -50,7 +53,7 @@ const OrderSummary: FC<{order: any}> = ({order}) => {
         )
       })}
 
-      <BillDetails totalItemPrice={totalPrice} />
+      <BillDetails totalItemPrice={totalPrice} discount={appliedCoupon?.discount} />
     </View>
   );
 };

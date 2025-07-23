@@ -57,10 +57,16 @@ const orderSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['available', 'confirmed', 'arriving', 'delivered', 'cancelled'],
+        enum: ['available', 'confirmed', 'arriving','out for delivery', 'delivered', 'cancelled'],
         default: 'available'
     },
     totalPrice: { type: Number, required: true },
+    discount : {type : Number},
+    finalTotal : {type : Number},
+    coupon : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'Coupon'
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });

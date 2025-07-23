@@ -19,7 +19,7 @@ const ArrowButton:FC<ArrowButtonProps> = ({title,loading,onPress,price}) => {
       {
         price != 0 && price && (
             <View>
-                <CustomText variant='h7' style={{color : '#fff'}} fontFamily={Fonts.Medium}>₹{price+40}.0</CustomText>
+                <CustomText variant='h7' style={{color : '#fff'}} fontFamily={Fonts.Medium}>₹{price}.0</CustomText>
                 <CustomText variant='h9' style={{color : '#fff'}} fontFamily={Fonts.Medium}>TOTAL</CustomText>
 
             </View>
