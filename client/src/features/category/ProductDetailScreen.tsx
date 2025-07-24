@@ -55,9 +55,6 @@ const ProductDetailScreen: FC = () => {
     const [loading, setLoading] = useState(true);
     const [showFullDescription, setShowFullDescription] = useState(false);
 
-    console.log(product);
-
-
     const ref = useRef<ICarouselInstance>(null);
     const progress = useSharedValue<number>(0);
 

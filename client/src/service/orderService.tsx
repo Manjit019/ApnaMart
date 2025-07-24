@@ -1,21 +1,62 @@
+import RazorpayCheckout, { CheckoutOptions } from 'react-native-razorpay';
 import { appAxios } from './apiInterceptors';
 import { BRANCH_ID } from './config';
+import { navigate, resetAndNavigate } from '@utils/NavigationUtils';
+import { Colors } from '@utils/Constants';
 
-export const createOrder = async (item: any, totalPrice: number, coupon?: any, deliveryLocation?: any, discount?: number, finalTotal?: number) => {
-
+export const createOrder = async (
+  item: any,
+  totalPrice: number,
+  coupon?: any,
+  deliveryLocation?: any,
+  discount?: number,
+  finalTotal?: number,
+  key: string,
+  order_id: string,
+  method?: any,
+  notes?: any
+) => {
   try {
-    const res = await appAxios.post('/order', {
-      items: item,
-      branch: BRANCH_ID,
-      totalPrice: totalPrice,
-      coupon,
-      deliveryLocation,
-      discount,
-      finalTotal
-    });
-    console.log(res);
+  
+    let options: CheckoutOptions = {
+      description: "Grocery Shopping",
+      image: "https://res.cloudinary.com/dkp5txigu/image/upload/v1741696157/app_icon_jra1d5.jpg",
+      currency: "INR",
+      key: key,
+      amount: finalTotal || totalPrice,
+      name: "ApnaMart",
+      order_id: order_id,
+      theme: {
+        color: Colors.secondary
+      },
+    }
 
-    return res.data;
+    RazorpayCheckout.open(options).then(async (data) => {
+      const res = await appAxios.post('/order', {
+        items: item,
+        branch: BRANCH_ID,
+        totalPrice: totalPrice,
+        coupon,
+        deliveryLocation,
+        discount,
+        finalTotal,
+        razorpay_order_id: order_id,
+        razorpay_payment_id: data?.razorpay_payment_id,
+        razorpay_signature: data?.razorpay_signature,
+        method,
+        notes
+      });
+
+    
+      if (res.data?.success) {
+        const orderData = res.data?.order;
+        resetAndNavigate('OrderSuccess', {...orderData });
+      }
+
+    }).catch(err => {
+      console.log(err);
+      return { type: 'error', message: 'Error!' }
+    })
   } catch (error) {
     console.log('Error creating order : ', error);
     return null;

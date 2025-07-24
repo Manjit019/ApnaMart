@@ -1,25 +1,38 @@
-import {StatusBar, StyleSheet, Text, View} from 'react-native';
-import React, {FC, useEffect} from 'react';
-import {useAuthStore} from '@state/authStore';
-import {screenWidth} from '@utils/Scaling';
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
+import React, { FC, useEffect } from 'react';
+import { useAuthStore } from '@state/authStore';
+import { screenWidth } from '@utils/Scaling';
 import LottieView from 'lottie-react-native';
 import CustomText from '@components/ui/CustomText';
-import {Colors, Fonts} from '@utils/Constants';
-import { replace } from '@utils/NavigationUtils';
+import { Colors, Fonts } from '@utils/Constants';
+import { goBack, replace } from '@utils/NavigationUtils';
+import { useRoute } from '@react-navigation/native';
+import { useCartStore } from '@state/cartStore';
+import { useCouponStore } from '@state/couponStore';
 
 const OrderSuccess: FC = () => {
-  const {user} = useAuthStore();
+  const { user, setCurrentOrder } = useAuthStore();
+  const { clearCart } = useCartStore();
+  const {clearCoupon} = useCouponStore();
 
-  useEffect(()=> {
-    const timeoutId = setTimeout(()=> {
-        replace('LiveTracking')
-    },2300)
-    return ()=> clearTimeout(timeoutId);
-  },[])
+  const route = useRoute();
+  const orderDetails = route?.params as Record<string, any>;
+
+  useEffect(() => {
+
+    clearCart();
+    clearCoupon();
+    setCurrentOrder(orderDetails);
+
+    const timeoutId = setTimeout(() => {
+      replace('LiveTracking')
+    }, 4000)
+    return () => clearTimeout(timeoutId);
+  }, [])
 
   return (
     <View style={styles.container}>
-       <StatusBar translucent={false} backgroundColor="#fff" barStyle='dark-content' />
+      <StatusBar translucent={false} backgroundColor="#fff" barStyle='dark-content' />
       <LottieView
         source={require('@assets/animations/confirm.json')}
         autoPlay

@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import jwt from "jsonwebtoken";
 
-
+ 
 export const verifyToken = async (req,reply) =>{
     try {
         const authHeader = req.headers["authorization"];

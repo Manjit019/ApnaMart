@@ -27,7 +27,7 @@ export async function resetAndNavigate(routeName:string,params?:object){
         navigationRef.dispatch(CommonActions.reset(
             {
                 index: 0,
-                routes: [{ name: routeName }]
+                routes: [{ name: routeName , params}]
             }
         ));
     }

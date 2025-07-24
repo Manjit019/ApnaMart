@@ -15,7 +15,7 @@ const ReportItem: FC<{
   return (
     <View style={[styles.flexRowBetween, {marginBottom: 10}]}>
       <View style={styles.flexRow}>
-        <Icon name={iconName} style={{opacity: 0.7}} size={RFValue(12)} />
+        <Icon name={iconName}  color="#34354bff" style={{opacity: 0.7}} size={RFValue(12)} />
         <CustomText
           style={{
             textDecorationLine: underline ? 'underline' : 'none',
@@ -78,7 +78,7 @@ const BillDetails: FC<{totalItemPrice: any; discount?: number}> = ({
               style={[styles.text, {color: '#2ead54ff'}]}
               variant="h7"
               fontFamily={Fonts.Bold}>
-              -₹{discount || 0}
+              -₹{Number(discount || 0)}
             </CustomText>
           </View>
           <View
@@ -100,7 +100,7 @@ const BillDetails: FC<{totalItemPrice: any; discount?: number}> = ({
               style={styles.text}
               variant="h6"
               fontFamily={Fonts.Bold}>
-              ₹{totalItemPrice + EXTRACHARGES - (discount || 0)}
+              ₹{Number(totalItemPrice) + Number(EXTRACHARGES) - Number(discount || 0)}
             </CustomText>
           </View>
         </>
