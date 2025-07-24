@@ -39,7 +39,7 @@ const LiveTracking = () => {
     msg = 'Order Picked Up';
     time = 'Arriving in 6 minutes...';
     step = 2;
-  } 
+  }
   // else if (currentOrder?.status === 'out for delivery') {
   //   msg = 'Out for delivery';
   //   time = 'Arriving in 2 minutes...';
@@ -85,13 +85,21 @@ const LiveTracking = () => {
             />
           </View>
           <View style={{ width: '82%' }}>
-            <CustomText
-              numberOfLines={1}
-              variant="h7"
-              fontFamily={Fonts.SemiBold}>
-              {currentOrder?.deliveryPartner?.name ||
-                'We will soon assign delivery partner'}
-            </CustomText>
+            {currentOrder?.deliveryPartner?.name ? (
+              <CustomText
+                numberOfLines={1}
+                variant="h7"
+                fontFamily={Fonts.SemiBold}>
+                {currentOrder?.deliveryPartner?.name}
+              </CustomText>
+            ) : (
+              <CustomText
+                numberOfLines={1}
+                variant="h7"
+                fontFamily={Fonts.SemiBold}>
+                We will soon assign delivery partner
+              </CustomText>
+            )}
 
             {currentOrder?.deliveryPartner && (
               <CustomText

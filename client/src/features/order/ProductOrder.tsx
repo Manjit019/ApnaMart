@@ -28,7 +28,7 @@ import CouponSheet from './CouponSheet';
 import { EXTRACHARGES } from '@service/config';
 import { useCouponStore } from '@state/couponStore';
 import { applyCoupon } from '@service/couponService';
-import { createRazorpayOrder, createTransaction } from '@service/paymentService';
+import { createTransaction } from '@service/transactionService';
 
 const ProductOrder = () => {
   const { getTotalPrice, cart, clearCart } = useCartStore();
@@ -36,7 +36,6 @@ const ProductOrder = () => {
   const { appliedCoupon: couponResult, clearCoupon, setCoupon } = useCouponStore() as any;
   const [loading, setLoading] = useState(false);
   const [couponSheetVisible, setCouponSheetVisible] = useState(false);
-
 
   const totalItemPrice = getTotalPrice();
 
@@ -57,40 +56,34 @@ const ProductOrder = () => {
       Alert.alert('Add any items to place order');
       return;
     }
-    const finalTotal = couponResult?.success ? couponResult?.finalTotal : totalItemPrice + EXTRACHARGES
+
+    const finalTotal = couponResult?.success ? couponResult.finalTotal : totalItemPrice + EXTRACHARGES;
 
     setLoading(true);
+    const tdata = await createTransaction(finalTotal, user?._id);
+    if (tdata) {
+      const data = await createOrder(
+        formattedData,
+        totalItemPrice + EXTRACHARGES,
+        couponResult?.couponId,
+        user?.liveLocation,
+        couponResult?.discount,
+        tdata?.amount,
+        tdata?.key,
+        tdata?.order_id,
+        tdata?.method,
+        tdata?.notes
+      ) as any;
+      setLoading(false);
 
-    // const tdata = await createTransaction(payableAmount,user?._id);
-    // if(tdata){
-    //   const order =await createRazorpayOrder(tdata?.key,tdata?.amount,tdata?.order_id,currentOrder,user?._id,user?.address);
-    //   setLoading(false);
-    //   if(order?.type === 'error'){
-    //     Alert.alert("Payment Failed!");
-    //   }
-
-
-    // } else{
-    //     setLoading(false);
-    //     Alert.alert("There was an Error!")
-    // }
-
-    const data = await createOrder(
-      formattedData,
-      totalItemPrice + EXTRACHARGES,
-      couponResult?.couponId,
-      user?.location ,
-      couponResult?.discount,
-      finalTotal
-    );
-
-    if (data != null) {
-      setCurrentOrder(data);
-      clearCart();
-      clearCoupon();
-      resetAndNavigate('OrderSuccess', { ...data });
+      if (data?.type === 'error') {
+        Alert.alert("Payment Failed!");
+      } 
+     
+    } else {
+      setLoading(false);
+      Alert.alert("There was an Error!")
     }
-
     setLoading(false);
   };
 
