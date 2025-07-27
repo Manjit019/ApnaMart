@@ -5,11 +5,11 @@ import { Colors, Fonts } from '@utils/Constants';
 import { RFValue } from 'react-native-responsive-fontsize';
 import CustomText from '@components/ui/CustomText';
 
-const DeliveryDetails:FC<{details : any}> = ({details}) => {
+const DeliveryDetails: FC<{ details: any ,paymentMode : string}> = ({ details,paymentMode }) => {
   return (
     <View style={styles.container}>
-      <View style={[styles.flexRow,styles.topStyle]}>
-         <View style={[styles.iconContainer,{borderRadius : 12}]}>
+      <View style={[styles.flexRow, styles.topStyle]}>
+        <View style={[styles.iconContainer, { borderRadius: 12 }]}>
           <Icon
             name="bike-fast"
             color={Colors.disabled}
@@ -25,7 +25,7 @@ const DeliveryDetails:FC<{details : any}> = ({details}) => {
       </View>
 
       <View style={styles.flexRow}>
-         <View style={styles.iconContainer}>
+        <View style={styles.iconContainer}>
           <Icon
             name="map-marker-outline"
             color={Colors.disabled}
@@ -41,7 +41,7 @@ const DeliveryDetails:FC<{details : any}> = ({details}) => {
       </View>
 
       <View style={styles.flexRow}>
-         <View style={styles.iconContainer}>
+        <View style={styles.iconContainer}>
           <Icon
             name="phone-outline"
             color={Colors.disabled}
@@ -55,6 +55,23 @@ const DeliveryDetails:FC<{details : any}> = ({details}) => {
           <CustomText variant='h8'>Reciever's cantact no.</CustomText>
         </View>
       </View>
+
+      <View style={styles.flexRow}>
+        <View style={styles.iconContainer}>
+          <Icon
+            name="cash"
+            color={Colors.disabled}
+            size={RFValue(20)}
+          />
+        </View>
+        <View>
+          <CustomText variant="h7" fontFamily={Fonts.Bold} >
+            Payment Mode
+          </CustomText>
+          <CustomText variant='h8'>{paymentMode==='COD' ? 'Cash On Delivery' : paymentMode ==='Online' && 'Paid Online' || '----------'}</CustomText>
+        </View>
+      </View>
+
     </View>
   )
 }
@@ -62,29 +79,29 @@ const DeliveryDetails:FC<{details : any}> = ({details}) => {
 export default DeliveryDetails
 
 const styles = StyleSheet.create({
-    container : {
-        width : '100%',
-        borderRadius : 16,
-        marginVertical : 15,
-        paddingBottom : 10,
-        backgroundColor : '#fff',
-        overflow : 'hidden'
-    },
-    flexRow : {
-        flexDirection : 'row',
-        alignItems : 'center',
-        gap : 10,
-        paddingHorizontal : 10,
-        marginBottom : 14
-    }, iconContainer: {
-        backgroundColor: Colors.backgroundSecondary,
-        borderRadius: 100,
-        padding: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-      topStyle : {
-        backgroundColor : Colors.border,
-        paddingVertical : 10,
-      }
+  container: {
+    width: '100%',
+    borderRadius: 16,
+    marginVertical: 15,
+    paddingBottom: 10,
+    backgroundColor: '#fff',
+    overflow: 'hidden'
+  },
+  flexRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 10,
+    marginBottom: 14
+  }, iconContainer: {
+    backgroundColor: Colors.backgroundSecondary,
+    borderRadius: 100,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  topStyle: {
+    backgroundColor: Colors.border,
+    paddingVertical: 10,
+  }
 })

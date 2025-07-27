@@ -19,7 +19,7 @@ import WalletSection from './WalletSection';
 
 const ProfileScreen = () => {
   const [orders, setOrders] = useState([]);
-  const { user, logout, currentOrder } = useAuthStore();
+  const { user, logout, currentOrder ,setCurrentOrder} = useAuthStore();
   const { clearCart } = useCartStore();
 
   const fetchOrders = async () => {
@@ -28,6 +28,7 @@ const ProfileScreen = () => {
   };
 
   useEffect(() => {
+    setCurrentOrder(null)
     fetchOrders();
   }, []);
 

@@ -59,7 +59,6 @@ const orderSchema = new mongoose.Schema({
       "available",
       "confirmed",
       "arriving",
-      "out for delivery",
       "delivered",
       "cancelled",
     ],
@@ -73,6 +72,8 @@ const orderSchema = new mongoose.Schema({
     ref: "Coupon",
   },
   transaction: { type: mongoose.Schema.Types.ObjectId, ref: "Transaction" },
+  paymentMode : {type : String, enum : ["COD","Online"], required : true},
+  paymentStatus : {type : String,enum : ['pending','paid'],default : 'pending'},
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

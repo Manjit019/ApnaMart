@@ -1,4 +1,4 @@
-import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React, { useEffect } from 'react';
 import { useAuthStore } from '@state/authStore';
 import { getOrderById } from '@service/orderService';
@@ -120,9 +120,15 @@ const LiveTracking = () => {
           </View>
         </View>
 
-        <DeliveryDetails details={currentOrder?.customer} />
+        <DeliveryDetails details={currentOrder?.customer} paymentMode={currentOrder?.paymentMode} />
 
         <OrderSummary order={currentOrder} discount={currentOrder?.discount || 0} />
+
+        {currentOrder?.paymentStatus === 'pending' && (
+          <TouchableOpacity activeOpacity={0.9} onPress={() => { }} style={styles.payNowBtn}>
+            <CustomText fontFamily={Fonts.SemiBold} style={{ color: '#fff' }} >Pay Now - ₹{currentOrder?.finalTotal} </CustomText>
+          </TouchableOpacity>
+        )}
 
         <View
           style={[
@@ -200,4 +206,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  payNowBtn: {
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: Colors.primary,
+    opacity: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 6,
+    marginVertical: 16
+  }
 });

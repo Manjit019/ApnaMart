@@ -11,52 +11,75 @@ export const createOrder = async (
   deliveryLocation?: any,
   discount?: number,
   finalTotal?: number,
-  key: string,
-  order_id: string,
+  paymentMode ?: 'COD'|'Online',
+  key?:any,
+  order_id?:any,
   method?: any,
-  notes?: any
+  notes?: any,
 ) => {
   try {
+
+    if(paymentMode === 'Online'){
+      let options: CheckoutOptions = {
+        description: "Grocery Shopping",
+        image: "https://res.cloudinary.com/dkp5txigu/image/upload/v1741696157/app_icon_jra1d5.jpg",
+        currency: "INR",
+        key: key,
+        amount: finalTotal || totalPrice,
+        name: "ApnaMart",
+        order_id: order_id,
+        theme: {
+          color: Colors.secondary
+        },
+      }
   
-    let options: CheckoutOptions = {
-      description: "Grocery Shopping",
-      image: "https://res.cloudinary.com/dkp5txigu/image/upload/v1741696157/app_icon_jra1d5.jpg",
-      currency: "INR",
-      key: key,
-      amount: finalTotal || totalPrice,
-      name: "ApnaMart",
-      order_id: order_id,
-      theme: {
-        color: Colors.secondary
-      },
+      RazorpayCheckout.open(options).then(async (data) => {
+        const res = await appAxios.post('/order', {
+          items: item,
+          branch: BRANCH_ID,
+          totalPrice: totalPrice,
+          coupon,
+          deliveryLocation,
+          discount,
+          finalTotal,
+          razorpay_order_id: order_id,
+          razorpay_payment_id: data?.razorpay_payment_id,
+          razorpay_signature: data?.razorpay_signature,
+          method,
+          notes
+        });
+  
+      
+        if (res.data?.success) {
+          const orderData = res.data?.order;
+          resetAndNavigate('OrderSuccess', {...orderData });
+        }
+  
+      }).catch(err => {
+        console.log(err);
+        return { type: 'error', message: 'Error!' }
+      })
+    } else if(paymentMode === 'COD'){
+        const res = await appAxios.post('/order', {
+          items: item,
+          branch: BRANCH_ID,
+          totalPrice: totalPrice,
+          coupon,
+          deliveryLocation,
+          discount,
+          finalTotal,
+          paymentMode
+        });
+  
+      
+        if (res.data?.success) {
+          const orderData = res.data?.order;
+          resetAndNavigate('OrderSuccess', {...orderData });
+        }
     }
 
-    RazorpayCheckout.open(options).then(async (data) => {
-      const res = await appAxios.post('/order', {
-        items: item,
-        branch: BRANCH_ID,
-        totalPrice: totalPrice,
-        coupon,
-        deliveryLocation,
-        discount,
-        finalTotal,
-        razorpay_order_id: order_id,
-        razorpay_payment_id: data?.razorpay_payment_id,
-        razorpay_signature: data?.razorpay_signature,
-        method,
-        notes
-      });
 
-    
-      if (res.data?.success) {
-        const orderData = res.data?.order;
-        resetAndNavigate('OrderSuccess', {...orderData });
-      }
-
-    }).catch(err => {
-      console.log(err);
-      return { type: 'error', message: 'Error!' }
-    })
+  
   } catch (error) {
     console.log('Error creating order : ', error);
     return null;

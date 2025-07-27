@@ -33,9 +33,16 @@ import { createTransaction } from '@service/transactionService';
 const ProductOrder = () => {
   const { getTotalPrice, cart, clearCart } = useCartStore();
   const { user, setCurrentOrder, currentOrder } = useAuthStore();
-  const { appliedCoupon: couponResult, clearCoupon, setCoupon } = useCouponStore() as any;
+  const {
+    appliedCoupon: couponResult,
+    clearCoupon,
+    setCoupon,
+  } = useCouponStore() as any;
   const [loading, setLoading] = useState(false);
   const [couponSheetVisible, setCouponSheetVisible] = useState(false);
+  const [paymentMode, setPaymentMode] = useState<'COD' | 'Online'>(
+    'Online',
+  );
 
   const totalItemPrice = getTotalPrice();
 
@@ -57,48 +64,73 @@ const ProductOrder = () => {
       return;
     }
 
-    const finalTotal = couponResult?.success ? couponResult.finalTotal : totalItemPrice + EXTRACHARGES;
+    const finalTotal = couponResult?.success
+      ? couponResult.finalTotal
+      : totalItemPrice + EXTRACHARGES;
 
     setLoading(true);
-    const tdata = await createTransaction(finalTotal, user?._id);
-    if (tdata) {
-      const data = await createOrder(
-        formattedData,
-        totalItemPrice + EXTRACHARGES,
-        couponResult?.couponId,
-        user?.liveLocation,
-        couponResult?.discount,
-        tdata?.amount,
-        tdata?.key,
-        tdata?.order_id,
-        tdata?.method,
-        tdata?.notes
-      ) as any;
-      setLoading(false);
 
-      if (data?.type === 'error') {
-        Alert.alert("Payment Failed!");
-      } 
-     
-    } else {
-      setLoading(false);
-      Alert.alert("There was an Error!")
+    if (paymentMode === 'Online') {
+      const tdata = await createTransaction(finalTotal, user?._id);
+      console.log(tdata);
+      
+      if (tdata) {
+        const data = (await createOrder(
+          formattedData,
+          totalItemPrice + EXTRACHARGES,
+          couponResult?.couponId,
+          user?.liveLocation,
+          couponResult?.discount,
+          tdata?.amount,
+          paymentMode,
+          tdata?.key,
+          tdata?.order_id,
+          tdata?.method,
+          tdata?.notes,
+        )) as any;
+        setLoading(false);
+
+        console.log(data);
+        
+  
+        if (data?.type === 'error') {
+          Alert.alert('Payment Failed!');
+        }
+      } else {
+        setLoading(false);
+        Alert.alert('There was an Error!');
+      }
+    } else if(paymentMode === 'COD') {
+         const data = await createOrder(
+          formattedData,
+          totalItemPrice + EXTRACHARGES,
+          couponResult?.couponId,
+          user?.liveLocation,
+          couponResult?.discount,
+          finalTotal,
+          paymentMode
+        ) ;
+        console.log(data);
+        
+        setLoading(false);
     }
-    setLoading(false);
+
   };
 
   useEffect(() => {
     const revalidateCoupon = async () => {
       if (!couponResult?.coupon) return;
       try {
-        const data = await applyCoupon(couponResult.coupon, totalItemPrice + EXTRACHARGES);
+        const data = await applyCoupon(
+          couponResult.coupon,
+          totalItemPrice + EXTRACHARGES,
+        );
         setCoupon(data);
       } catch (error) {
         console.log('Failed to revalidate coupon:', error);
       }
     };
     revalidateCoupon();
-
   }, [totalItemPrice]);
 
   return (
@@ -150,8 +182,10 @@ const ProductOrder = () => {
               Congrats! You have got discount of ₹{couponResult?.discount}
             </CustomText>
 
-            <TouchableOpacity style={styles.removeBtn} onPress={() => clearCoupon()} >
-              <Icon name='close-circle' color={'#707471f8'} size={18} />
+            <TouchableOpacity
+              style={styles.removeBtn}
+              onPress={() => clearCoupon()}>
+              <Icon name="close-circle" color={'#707471f8'} size={18} />
             </TouchableOpacity>
           </View>
         ) : (
@@ -176,6 +210,39 @@ const ProductOrder = () => {
           totalItemPrice={totalItemPrice}
           discount={couponResult?.discount}
         />
+
+        <View style={styles.paymentModeContainer}>
+          <CustomText
+            variant="h6"
+            fontFamily={Fonts.SemiBold}
+            style={{ marginVertical: 8 }}>
+            Choose Payment Method
+          </CustomText>
+          <View style={styles.flexRow}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => setPaymentMode('COD')}
+              style={[
+                styles.paymentMode,
+                paymentMode === 'COD' ? styles.selectedpaymentMode : '',
+              ]}>
+              <Icon name="cash" size={RFValue(12)} />
+              <CustomText fontFamily={Fonts.Medium}>
+                Cash on Delivery
+              </CustomText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => setPaymentMode('Online')}
+              style={[
+                styles.paymentMode,
+                paymentMode === 'Online' ? styles.selectedpaymentMode : '',
+              ]}>
+              <Icon name="qrcode" size={RFValue(12)} />
+              <CustomText fontFamily={Fonts.Medium}>Pay Online</CustomText>
+            </TouchableOpacity>
+          </View>
+        </View>
 
         <View style={styles.flexRowBetween}>
           <View>
@@ -233,13 +300,17 @@ const ProductOrder = () => {
                 fontFamily={Fonts.Regular}
                 variant="h9"
                 style={{ marginTop: 2 }}>
-                Cash on Delivery
+                {paymentMode === 'COD' ? 'Cash on Delivery' : 'Online Secured'}
               </CustomText>
             </View>
             <View style={{ width: '70%' }}>
               <ArrowButton
                 loading={loading}
-                price={couponResult?.success ? totalItemPrice + EXTRACHARGES - couponResult?.discount : totalItemPrice + EXTRACHARGES}
+                price={
+                  couponResult?.success
+                    ? totalItemPrice + EXTRACHARGES - couponResult?.discount
+                    : totalItemPrice + EXTRACHARGES
+                }
                 title="Place Order"
                 onPress={handlePlaceOrder}
               />
@@ -249,9 +320,7 @@ const ProductOrder = () => {
       </View>
 
       {couponSheetVisible && (
-        <CouponSheet
-          onClose={() => setCouponSheetVisible(false)}
-        />
+        <CouponSheet onClose={() => setCouponSheetVisible(false)} />
       )}
     </View>
   );
@@ -325,8 +394,31 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 6,
     right: 6,
-
-  }
+  },
+  paymentModeContainer: {
+    marginBottom: 17,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    padding: 10,
+  },
+  paymentMode: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    backgroundColor: '#d6d6d651',
+    borderWidth: 0.3,
+    borderColor: '#b1b1b190',
+    opacity : 0.7
+  },
+  selectedpaymentMode: {
+    borderWidth: 1,
+    borderColor: Colors.secondary,
+    backgroundColor: '#78d4fc23',
+     opacity : 1
+  },
 });
 
 export default ProductOrder;

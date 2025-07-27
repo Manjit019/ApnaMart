@@ -25,7 +25,8 @@ export const createOrder = async (req, reply) => {
             deliveryLocation,
             pickupLocation,
             method,
-            notes
+            notes,
+            paymentMode
         } = req.body;
 
         const key_secret = process.env.RAZORPAY_KEY_SECRET;
@@ -35,6 +36,45 @@ export const createOrder = async (req, reply) => {
 
         if (!customerData) {
             return reply.status(404).send({ success: false, message: "Customer not found" });
+        }
+
+        if (paymentMode === 'COD') {
+            const newOrder = new Order({
+                customer: userId,
+                items: items.map((item) => ({
+                    id: item.id,
+                    item: item.item,
+                    itemCount: item.count,
+                })),
+                branch,
+                totalPrice: totalPrice,
+                deliveryLocation: deliveryLocation || {
+                    latitude: customerData.liveLocation.latitude,
+                    longitude: customerData.liveLocation.longitude,
+                    address: customerData.address || "No Address Available",
+                },
+                pickupLocation: pickupLocation || {
+                    latitude: branchData.location.latitude,
+                    longitude: branchData.location.longitude,
+                    address: branchData.address || "No Address Available",
+                },
+                coupon,
+                discount,
+                finalTotal,
+                paymentMode: 'COD',
+                paymentStatus : 'pending'
+            });
+
+            let orderData = await newOrder.save();
+            orderData = await orderData.populate([ { path: "items.item" } ]);
+
+            console.log("✅ Order created, Cash on delivery");
+
+            return reply.status(201).send({
+                success: true,
+                message: "Order created, Cash on Delivery",
+                order: orderData,
+            });
         }
 
         const generated_signature = crypto
@@ -47,7 +87,7 @@ export const createOrder = async (req, reply) => {
         if (!isMatch) {
             return reply.status(400).send({ success: false, message: "Invalid payment signature" });
         }
-        
+
         const amountInRupees = finalTotal / 100;
 
         const transaction = await Transaction.create({
@@ -69,7 +109,7 @@ export const createOrder = async (req, reply) => {
                 itemCount: item.count,
             })),
             branch,
-            totalPrice: totalPrice, 
+            totalPrice: totalPrice,
             deliveryLocation: deliveryLocation || {
                 latitude: customerData.liveLocation.latitude,
                 longitude: customerData.liveLocation.longitude,
@@ -83,11 +123,13 @@ export const createOrder = async (req, reply) => {
             coupon,
             discount,
             finalTotal: amountInRupees,
-            transaction: transaction._id
+            transaction: transaction._id,
+            paymentMode : 'Online',
+            paymentStatus : 'paid'
         });
 
         let orderData = await newOrder.save();
-        orderData = await orderData.populate([{ path: "items.item" }]);
+        orderData = await orderData.populate([ { path: "items.item" } ]);
 
         transaction.orderRef = orderData._id;
         await transaction.save();
@@ -167,7 +209,7 @@ export const updateOrderStatus = async (req, reply) => {
         if (!order) {
             return reply.status(404).send({ message: "Order not found" });
         }
-        if (["cancelled", "delivered"].includes(order.status)) {
+        if ([ "cancelled", "delivered" ].includes(order.status)) {
             return reply
                 .status(400)
                 .send({ message: "Order is already cancelled or delivered" });
@@ -178,8 +220,13 @@ export const updateOrderStatus = async (req, reply) => {
                 .send({ message: "You are not authorized to update this order" });
         }
 
+        
         order.status = status;
         order.deliveryPersonLocation = deliveryPersonLocation;
+        
+        if(order.status === 'delivered' && order.paymentMode === 'COD'){
+            order.paymentStatus === 'paid';
+        }
 
         await order.save();
 
