@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
 
     },
     productInfo: {
-        padding: 20,
+        padding: 10,
         backgroundColor: '#fff',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,

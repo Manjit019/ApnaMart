@@ -16,16 +16,19 @@ const OrderSuccess: FC = () => {
   const {clearCoupon} = useCouponStore();
 
   const route = useRoute();
-  const orderDetails = route?.params as Record<string, any>;
+  const {orderDetails,isPayment=false} = route?.params as Record<string, any>;
+
+  console.log(orderDetails,isPayment);
+  
 
   useEffect(() => {
-
     clearCart();
     clearCoupon();
     setCurrentOrder(orderDetails);
 
     const timeoutId = setTimeout(() => {
-      replace('LiveTracking')
+      goBack();
+      replace('LiveTracking');
     }, 4000)
     return () => clearTimeout(timeoutId);
   }, [])
@@ -44,17 +47,17 @@ const OrderSuccess: FC = () => {
         hardwareAccelerationAndroid
       />
       <CustomText
-        variant="h8"
+        variant="h5"
         fontFamily={Fonts.SemiBold}
         style={styles.orderPlacedText}>
-        ORDER PLACED
+        {isPayment ? 'PAYMENT SUCCESSFUL' : 'ORDER PLACED'}
       </CustomText>
       <View style={styles.deliveryContainer}>
         <CustomText
-          variant="h4"
+          variant="h7"
           fontFamily={Fonts.SemiBold}
           style={styles.deliveryText}>
-          Delivering to Home
+          {isPayment ? 'Thank you! Your order will be delivered soon.' :  'Delivering to Home'  }
         </CustomText>
       </View>
       <CustomText variant="h8" style={styles.addressText}>
@@ -72,13 +75,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     backgroundColor: '#fff',
+    padding : 12
   },
   lottieView: {
     width: screenWidth * 0.6,
     height: 150,
   },
   orderPlacedText: {
-    opacity: 0.6,
+    color : Colors.text
   },
   deliveryContainer: {
     borderBottomWidth: 2,
@@ -89,6 +93,8 @@ const styles = StyleSheet.create({
   deliveryText: {
     marginTop: 15,
     borderColor: Colors.secondary,
+    textAlign : 'center',
+    opacity: 0.7,
   },
   addressText: {
     opacity: 0.8,

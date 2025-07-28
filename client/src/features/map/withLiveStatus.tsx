@@ -8,6 +8,7 @@ import {Colors, Fonts} from '@utils/Constants';
 import {navigate} from '@utils/NavigationUtils';
 import {FC, useEffect} from 'react';
 import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
+import Icon  from 'react-native-vector-icons/Ionicons';
 import {io} from 'socket.io-client';
 
 const withLiveStatus = <P extends object>(
@@ -23,7 +24,14 @@ const withLiveStatus = <P extends object>(
 
     const fetchOrderDetails = async () => {
       const data = await getOrderById(currentOrder?._id as any);
-      setCurrentOrder(data);
+      if(data?.success){
+        setCurrentOrder(data.order);
+      }
+      const isDeliveredOrCancelled = data?.order?.status === 'delivered' || data?.order?.status === 'cancelled';
+
+      if(isDeliveredOrCancelled){
+        setCurrentOrder(null);
+      }
     };
 
 
@@ -36,7 +44,6 @@ const withLiveStatus = <P extends object>(
           withCredentials: true,
           path : "/socket.io/"
         });
-        console.log(socketInstance);
         
         socketInstance.emit('joinRoom', currentOrder?._id);
         socketInstance.on('liveTrackingUpdate', (updatedOrder) => {
@@ -74,14 +81,14 @@ const withLiveStatus = <P extends object>(
                   style={{width: 20, height: 20}}
                 />
               </View>
-              <View style={{width: '68%'}}>
+              <View style={{width: '65%'}}>
                 <CustomText variant="h7" fontFamily={Fonts.SemiBold}>
                   Order is {currentOrder?.status}
                 </CustomText>
                 <CustomText variant="h9" fontFamily={Fonts.Medium}>
                   {currentOrder?.items![0]?.item.name +
                     (currentOrder?.items?.length - 1 > 0
-                      ? `and ${currentOrder?.items?.length - 1}+ items`
+                      ? ` and ${currentOrder?.items?.length - 1}+ more items`
                       : '')}
                 </CustomText>
               </View>
@@ -91,6 +98,7 @@ const withLiveStatus = <P extends object>(
               activeOpacity={0.8}
               style={styles.btn}
               onPress={() => navigate('LiveTracking')}>
+                <Icon name='eye' color={Colors.secondary} size={16} />
               <CustomText
                 fontFamily={Fonts.Medium}
                 variant="h8"
@@ -127,11 +135,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btn: {
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderWidth: 0.7,
     borderColor: Colors.secondary,
-    borderRadius: 5,
+    borderRadius: 15,
+    flexDirection : 'row',
+    alignItems : 'center',
+    justifyContent : 'center',
+    gap : 4
   },
 });
 

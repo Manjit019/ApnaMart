@@ -12,7 +12,7 @@ const transactionSchema = new mongoose.Schema({
     },
     orderId : {
         type : String,
-        required : true,
+        required : true, 
         unique : true
     },
     paymentId : {type : String,required : true},

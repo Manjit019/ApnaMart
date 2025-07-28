@@ -31,9 +31,12 @@ const DeliveryMap = () => {
 
   const fetchOrderDetails = async () => {
     const data = await getOrderById(orderDetails?._id as any);
-    setCurrentOrder(data);
-    setOrderData(data);
-    setLoading(false);
+
+    if(data?.success){
+      setCurrentOrder(data.order);
+      setOrderData(data.order);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -56,10 +59,12 @@ const DeliveryMap = () => {
     return () => Geolocation.clearWatch(watchId);
   }, []);
 
+
+
   const acceptOrder = async () => {
     const data = await confirmOrder(orderData?._id, myLocation);
-    if (data) {
-      setCurrentOrder(data);
+    if (data?.success) {
+      setCurrentOrder(data?.order);
       Alert.alert('Order Accepted,Grab your package');
     } else {
       Alert.alert('There was an error!');
@@ -105,9 +110,9 @@ const DeliveryMap = () => {
       'delivered',
     );
 
-    if (data) {
+    if (data?.success) {
       setCurrentOrder(null);
-      Alert.alert('Congrats!,You made it😍', "Great job! Order Delivered Successfully");
+      Alert.alert(`Congrats!,You made it😍', "Great job! Order Delivered Successfully.`);
     } else {
       Alert.alert('There was an error!');
     }
@@ -182,7 +187,7 @@ const DeliveryMap = () => {
           hasPickedUp={currentOrder?.status === 'arriving'}
         />
 
-        <DeliveryDetails details={currentOrder?.customer} />
+        <DeliveryDetails details={currentOrder?.customer} paymentMode={currentOrder?.paymentMode} />
 
         <OrderSummary order={currentOrder} discount={currentOrder?.discount} />
 

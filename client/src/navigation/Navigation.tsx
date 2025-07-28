@@ -49,7 +49,7 @@ const Navigation: FC = () => {
           options={{ navigationBarHidden: true }} />
 
         <Stack.Screen name="OrderSuccess" component={OrderSuccess}
-          options={{ navigationBarHidden: true }} />
+          options={{ navigationBarHidden: true ,animation : 'fade_from_bottom'}} />
 
         <Stack.Screen name="LiveTracking" component={LiveTracking}
           options={{ navigationBarHidden: true }} />
