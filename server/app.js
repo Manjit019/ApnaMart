@@ -12,7 +12,6 @@ const start = async () => {
 
     const app = fastify({
         logger: true,
-        trustProxy : true,
     });
 
     app.register(fastifySocketIO, {

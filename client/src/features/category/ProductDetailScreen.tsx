@@ -55,9 +55,6 @@ const ProductDetailScreen: FC = () => {
     const [loading, setLoading] = useState(true);
     const [showFullDescription, setShowFullDescription] = useState(false);
 
-    console.log(product);
-
-
     const ref = useRef<ICarouselInstance>(null);
     const progress = useSharedValue<number>(0);
 
@@ -418,7 +415,7 @@ const styles = StyleSheet.create({
 
     },
     productInfo: {
-        padding: 20,
+        padding: 10,
         backgroundColor: '#fff',
         borderTopLeftRadius: 24,
         borderTopRightRadius: 24,

@@ -5,6 +5,7 @@ import Product from "./products.js";
 import Order from './order.js'
 import Counter from "./counter.js";
 import Coupon from './coupon.js'
+import Transaction from "./transaction.js";
 
 export {
     Branch,
@@ -15,5 +16,6 @@ export {
     Product,
     Order,
     Counter,
-    Coupon
+    Coupon,
+    Transaction
 };

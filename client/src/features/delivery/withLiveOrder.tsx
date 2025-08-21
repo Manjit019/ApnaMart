@@ -15,6 +15,9 @@ const withLiveOrder = <P extends object>(
     const {currentOrder, user} = useAuthStore();
     const [myLocation, setMyLocation] = useState<any>(null);
 
+    console.log(currentOrder);
+    
+
     useEffect(() => {
       if (currentOrder) {
         const watchId = Geolocation.watchPosition(
@@ -79,17 +82,19 @@ const withLiveOrder = <P extends object>(
                   source={require('@assets/icons/bucket.png')}
                   style={{width: 20, height: 20}}
                 />
+                
               </View>
-              <View style={{width: '65%'}}>
+              <View style={{width: '62%'}}>
                 <CustomText variant="h6" fontFamily={Fonts.SemiBold}>
                   {currentOrder?.orderId}
                 </CustomText>
                 <CustomText variant="h9" fontFamily={Fonts.SemiBold}>
-                  {currentOrder?.deliveryLocation?.address}
+                  {currentOrder?.deliveryLocation?.address || currentOrder?.customer?.address}
                 </CustomText>
               </View>
               <TouchableOpacity
                 activeOpacity={0.7}
+                style={styles.btn}
                 onPress={() => {
                   navigate('DeliveryMap', {...currentOrder});
                 }}>
@@ -131,11 +136,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btn: {
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderWidth: 0.7,
     borderColor: Colors.secondary,
-    borderRadius: 5,
+    borderRadius: 15,
   },
 });
 

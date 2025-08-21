@@ -1,21 +1,21 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {FC} from 'react';
-import {Colors, Fonts} from '@utils/Constants';
+import { StyleSheet, Text, View } from 'react-native';
+import React, { FC } from 'react';
+import { Colors, Fonts } from '@utils/Constants';
 import CustomText from '@components/ui/CustomText';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {EXTRACHARGES} from '@service/config';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { EXTRACHARGES } from '@service/config';
 
 const ReportItem: FC<{
   iconName: string;
   underline?: boolean;
   title: string;
   price: number;
-}> = ({iconName, price, title, underline}) => {
+}> = ({ iconName, price, title, underline }) => {
   return (
-    <View style={[styles.flexRowBetween, {marginBottom: 10}]}>
+    <View style={[styles.flexRowBetween, { marginBottom: 10 }]}>
       <View style={styles.flexRow}>
-        <Icon name={iconName} style={{opacity: 0.7}} size={RFValue(12)} />
+        <Icon name={iconName} color="#34354bff" style={{ opacity: 0.7 }} size={RFValue(12)} />
         <CustomText
           style={{
             textDecorationLine: underline ? 'underline' : 'none',
@@ -33,7 +33,7 @@ const ReportItem: FC<{
   );
 };
 
-const BillDetails: FC<{totalItemPrice: any; discount?: number}> = ({
+const BillDetails: FC<{ totalItemPrice: any; discount?: number }> = ({
   totalItemPrice,
   discount,
 }) => {
@@ -55,7 +55,7 @@ const BillDetails: FC<{totalItemPrice: any; discount?: number}> = ({
       </View>
       <View style={[styles.flexRowBetween]}>
         <CustomText
-          style={[styles.text,discount ? {opacity : 0.7} : {opacity : 1}]}
+          style={[styles.text, discount ? { opacity: 0.7 } : { opacity: 1 }]}
           variant="h7"
           fontFamily={Fonts.SemiBold}>
           Grand Total
@@ -65,27 +65,26 @@ const BillDetails: FC<{totalItemPrice: any; discount?: number}> = ({
         </CustomText>
       </View>
 
-      {discount && (
+      {discount ? (
         <>
-          <View style={[styles.flexRowBetween, {marginBottom: 16}]}>
+          <View style={[styles.flexRowBetween, { marginBottom: 16 }]}>
             <CustomText
-              style={[styles.text,{opacity : 0.7}]}
+              style={[styles.text, { opacity: 0.7 }]}
               variant="h7"
               fontFamily={Fonts.SemiBold}>
               Discount
             </CustomText>
             <CustomText
-              style={[styles.text, {color: '#2ead54ff'}]}
+              style={[styles.text, { color: '#2ead54ff' }]}
               variant="h7"
               fontFamily={Fonts.Bold}>
-              -₹{discount || 0}
+              -₹{Number(discount || 0)}
             </CustomText>
           </View>
           <View
             style={[
               styles.flexRowBetween,
               {
-                marginBottom: 16,
                 borderTopColor: '#2e3b2d24',
                 borderTopWidth: 1,
               },
@@ -100,10 +99,12 @@ const BillDetails: FC<{totalItemPrice: any; discount?: number}> = ({
               style={styles.text}
               variant="h6"
               fontFamily={Fonts.Bold}>
-              ₹{totalItemPrice + EXTRACHARGES - (discount || 0)}
+              ₹{Number(totalItemPrice) + Number(EXTRACHARGES) - Number(discount || 0)}
             </CustomText>
           </View>
         </>
+      ) : (
+        ''
       )}
     </View>
   );
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 16,
     marginVertical: 15,
-    paddingBottom : 10
+    paddingBottom: 10
   },
   text: {
     marginHorizontal: 10,

@@ -1,13 +1,16 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
-import React, {FC} from 'react';
-import {Colors, Fonts} from '@utils/Constants';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import React, { FC } from 'react';
+import { Colors, Fonts } from '@utils/Constants';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {RFValue} from 'react-native-responsive-fontsize';
+import { RFValue } from 'react-native-responsive-fontsize';
 import CustomText from '@components/ui/CustomText';
 import BillDetails from '@features/order/BillDetails';
 import { useCouponStore } from '@state/couponStore';
 
-const OrderSummary: FC<{order: any,discount:number}> = ({order,discount}) => {
+const OrderSummary: FC<{ order: any; discount: number }> = ({
+  order,
+  discount,
+}) => {
   const totalPrice =
     order?.items?.reduce(
       (totalPrice: number, cartItems: any) =>
@@ -15,11 +18,10 @@ const OrderSummary: FC<{order: any,discount:number}> = ({order,discount}) => {
       0,
     ) || 0;
 
-
   return (
     <View style={styles.container}>
-      <View style={[styles.flexRow,styles.topStyle]}>
-        <View style={[styles.iconContainer,{borderRadius : 12}]}>
+      <View style={[styles.flexRow, styles.topStyle]}>
+        <View style={[styles.iconContainer, { borderRadius: 12 }]}>
           <Icon
             name="shopping-outline"
             color={Colors.disabled}
@@ -36,23 +38,56 @@ const OrderSummary: FC<{order: any,discount:number}> = ({order,discount}) => {
 
       {order?.items?.map((item: any, index: number) => {
         return (
-            <View style={[styles.flexRow,{borderBottomColor : Colors.border,borderBottomWidth : 0.2}]} key={index}>
-                <View style={styles.imgContainer}>
-                    <Image source={{uri : item?.item?.image}} style={styles.img} />    
-                 </View>
-                 <View style={{width:'55%'}}>
-                    <CustomText numberOfLines={2} variant='h8' fontFamily={Fonts.Medium} >{item?.item?.name}</CustomText>
-                    <CustomText variant='h9' style={{marginTop : 4}} >{item.item.quantity}</CustomText>
-                 </View>
-
-                 <View style={{width : '20%',alignItems : 'flex-end'}}>
-                    <CustomText variant='h7' fontFamily={Fonts.SemiBold} style={{alignSelf : 'flex-end' , marginTop : 4}}>₹{item.itemCount * item.item.price}</CustomText>
-                 </View>
+          <View
+            style={[
+              styles.flexRow,
+              { borderBottomColor: Colors.border, borderBottomWidth: 0.2 },
+            ]}
+            key={index}>
+            <View style={styles.imgContainer}>
+              <Image source={{ uri: item?.item?.image }} style={styles.img} />
             </View>
-        )
+            <View style={{ width: '55%' }}>
+              <CustomText
+                numberOfLines={2}
+                variant="h8"
+                fontFamily={Fonts.Medium}>
+                {item?.item?.name}
+              </CustomText>
+              <CustomText variant="h9" style={{ marginTop: 4 }}>
+                {item.item.quantity}
+              </CustomText>
+            </View>
+
+            <View style={{ width: '20%', alignItems: 'flex-end' }}>
+              <CustomText
+                variant="h7"
+                fontFamily={Fonts.SemiBold}
+                style={{ alignSelf: 'flex-end', marginTop: 4 }}>
+                ₹{item.itemCount * item.item.price}
+              </CustomText>
+            </View>
+          </View>
+        );
       })}
 
       <BillDetails totalItemPrice={totalPrice} discount={discount} />
+
+      <View style={styles.paymentStatusContainer}>
+        <CustomText>Payment Status : </CustomText>
+        <View style={[styles.paymentStatus]}>
+          <Icon name={order?.paymentStatus === 'paid' ? 'check-circle-outline' : 'clock-outline'} color={order?.paymentStatus === 'paid' ? '#20cd54ff' : '#c59621ff'} size={RFValue(12)} />
+          <CustomText
+            fontFamily={Fonts.Medium}
+            style={{
+              color:
+                order?.paymentStatus === 'paid' ? '#20cd54ff' : '#c59621ff',
+              textTransform: 'uppercase',
+            }}>
+            {order?.paymentStatus}
+          </CustomText>
+        </View>
+      </View>
     </View>
   );
 };
@@ -75,7 +110,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginVertical: 15,
     backgroundColor: '#fff',
-    overflow : 'hidden'
+    overflow: 'hidden',
   },
   iconContainer: {
     backgroundColor: Colors.backgroundSecondary,
@@ -93,8 +128,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 10,
   },
-  topStyle : {
-    backgroundColor : Colors.border,
-    paddingVertical : 10,
-  }
+  topStyle: {
+    backgroundColor: Colors.border,
+    paddingVertical: 10,
+  },
+  paymentStatus: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: 6,
+    borderRadius: 12,
+    marginTop: -14,
+  },
+  paymentStatusContainer: {
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderTopColor: Colors.border,
+    borderTopWidth: 0.2,
+  },
 });

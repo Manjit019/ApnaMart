@@ -2,6 +2,7 @@ import { authRoutes } from "./auth.js";
 import { couponRoutes } from "./coupon.js";
 import { orderRoutes } from "./order.js";
 import { categoryRoutes, productRoutes } from "./product.js";
+import {transactionRoutes} from './transaction.js'
 
 const prefix = '/api';
 
@@ -10,5 +11,6 @@ export const registerRoutes = async (fastify) =>{
     fastify.register(categoryRoutes,{prefix : prefix});
     fastify.register(productRoutes,{prefix : prefix});
     fastify.register(orderRoutes,{prefix : prefix});
-    fastify.register(couponRoutes,{prefix : prefix})
+    fastify.register(couponRoutes,{prefix : prefix});
+    fastify.register(transactionRoutes,{prefix : prefix})
 }

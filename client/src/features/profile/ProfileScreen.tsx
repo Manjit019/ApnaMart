@@ -18,16 +18,18 @@ import WalletSection from './WalletSection';
 
 
 const ProfileScreen = () => {
-  const [orders, setOrders] = useState([]);
-  const { user, logout, currentOrder } = useAuthStore();
+  const [ordersData, setOrdersData] = useState<any>([]);
+  const { user, logout, currentOrder ,setCurrentOrder} = useAuthStore();
   const { clearCart } = useCartStore();
 
   const fetchOrders = async () => {
     const data = await fetchCustomerOrders(user?._id);
-    setOrders(data);
+    setOrdersData(data);
   };
+  
 
   useEffect(() => {
+    setCurrentOrder(null)
     fetchOrders();
   }, []);
 
@@ -83,7 +85,7 @@ const ProfileScreen = () => {
           variant="h8"
           fontFamily={Fonts.SemiBold}
           style={{ color: Colors.text, marginBottom: 10, marginTop: 25 }}>
-          PAST ORDERS
+          PAST ORDERS - {ordersData?.count}
         </CustomText>
       </View>
     );
@@ -98,7 +100,7 @@ const ProfileScreen = () => {
       <CustomHeader title="Profile" />
 
       <FlatList
-        data={orders.reverse()}
+        data={ordersData?.orders}
         ListHeaderComponent={renderHeader}
         renderItem={renderOrders}
         keyExtractor={(item: any) => item?.orderId}
@@ -107,7 +109,7 @@ const ProfileScreen = () => {
           <CustomText
             variant="h9"
             style={{ textAlign: 'center', paddingTop: 140 }}>
-            App Version 1.0.0.0
+            App Version 2.0.0
           </CustomText>
         }
         ListFooterComponentStyle={{ paddingTop: 120 }}

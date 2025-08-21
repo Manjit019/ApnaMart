@@ -159,7 +159,11 @@ const DetailsTabs: FC<{ product: Product }> = ({ product }) => {
     return (
         <View style={styles.tabsContainer} >
             <View style={styles.tabsHeader}>
-                {(['details', 'nutrition', 'reviews'] as const).map((tab) => (
+                {(['details', 'nutrition', 'reviews'] as const).map((tab) => {
+                    if(!product?.nutritionalInfo && tab==='nutrition'){
+                        return;
+                    }
+                    return  (
                     <TouchableOpacity
                         key={tab}
                         style={[styles.tab, activeTab === tab && styles.activeTab]}
@@ -173,7 +177,8 @@ const DetailsTabs: FC<{ product: Product }> = ({ product }) => {
                             {tab.charAt(0).toUpperCase() + tab.slice(1)}
                         </CustomText>
                     </TouchableOpacity>
-                ))}
+                )
+                })}
             </View>
             {renderTabContent()}
         </View >

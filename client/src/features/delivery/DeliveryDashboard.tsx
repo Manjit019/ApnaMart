@@ -47,7 +47,7 @@ const DeliveryDashboard = () => {
       setRefreshing(true);
       setLoading(true);
       const orderData = await fetchOrders(selectedTab, user._id, user.branch);
-      setData(orderData || []);
+      setData(orderData?.orders || []);
     } catch (error) {
       console.error('Error fetching orders:', error);
       setData([]);
